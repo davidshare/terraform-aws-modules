@@ -8,6 +8,12 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Allow write access to repository contents (required for creating releases)
+      id-token: write # Allow using GitHub Actions tokens
+      pull-requests: write # If you need to interact with pull requests
+      issues: write # If you need to interact with issues
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
