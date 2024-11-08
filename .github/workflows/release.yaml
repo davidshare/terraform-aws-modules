@@ -1,0 +1,49 @@
+name: Create Module Releases
+
+on:
+  push:
+    tags:
+      - "*-v*" # Match tags that contain a module name followed by "-v"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up variables
+        id: vars
+        run: |
+          # Extract the module name from the tag
+          TAG_NAME=${GITHUB_REF##*/}
+          # Split the tag to get the module name and version
+          MODULE_NAME=${TAG_NAME%-*}  # Get everything before the last '-'
+          VERSION=${TAG_NAME#*-}       # Get everything after the first '-'
+          echo "MODULE_NAME=${MODULE_NAME}" >> $GITHUB_ENV
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Check if module directory exists
+        id: check_module
+        run: |
+          if [ ! -d "${MODULE_NAME}" ]; then
+            echo "Module directory ${MODULE_NAME} does not exist."
+            exit 1
+          fi
+          echo "Module directory ${MODULE_NAME} exists."
+
+      - name: Create release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+          files: |
+            ${MODULE_NAME}/main.tf
+            ${MODULE_NAME}/outputs.tf
+            ${MODULE_NAME}/variables.tf
+            # Add more files as needed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
