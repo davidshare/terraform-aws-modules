@@ -49,6 +49,11 @@ jobs:
             ${{ env.MODULE_NAME }}/main.tf
             ${{ env.MODULE_NAME }}/outputs.tf
             ${{ env.MODULE_NAME }}/variables.tf
-            # Add more files as needed
+            # List other files for the specific module, or use a wildcard if applicable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: List files in release directory (for debugging)
+        run: |
+          echo "Files to include in release:"
+          ls -R ${{ env.MODULE_NAME }}
