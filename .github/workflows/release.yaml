@@ -17,7 +17,6 @@ jobs:
         run: |
           # Extract the module name from the tag
           TAG_NAME=${GITHUB_REF##*/}
-          # Split the tag to get the module name and version
           MODULE_NAME=${TAG_NAME%-*}  # Get everything before the last '-'
           VERSION=${TAG_NAME#*-}       # Get everything after the first '-'
           echo "MODULE_NAME=${MODULE_NAME}" >> $GITHUB_ENV
@@ -37,13 +36,13 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          name: Release ${{ github.ref }} # Corrected from 'release_name'
           draft: false
           prerelease: false
           files: |
-            ${MODULE_NAME}/main.tf
-            ${MODULE_NAME}/outputs.tf
-            ${MODULE_NAME}/variables.tf
+            ${{ env.MODULE_NAME }}/main.tf
+            ${{ env.MODULE_NAME }}/outputs.tf
+            ${{ env.MODULE_NAME }}/variables.tf
             # Add more files as needed
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
