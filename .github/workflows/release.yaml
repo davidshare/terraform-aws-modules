@@ -6,8 +6,13 @@ on:
       - "*-v*" # Matches any tag containing a module name followed by "-v"
 
 jobs:
-  create_release:
+  release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Allow write access to repository contents (required for creating releases)
+      id-token: write
+      pull-requests: write
+      issues: write
 
     steps:
       - name: Extract module and version from tag
