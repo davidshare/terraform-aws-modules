@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write # Allow write access to repository contents (required for creating releases)
-      id-token: write # Allow using GitHub Actions tokens
-      pull-requests: write # If you need to interact with pull requests
-      issues: write # If you need to interact with issues
+      id-token: write
+      pull-requests: write
+      issues: write
 
     steps:
       - name: Checkout code
@@ -21,7 +21,7 @@ jobs:
       - name: Set up variables
         id: vars
         run: |
-          # Extract the module name from the tag
+          # Extract the module name from the tag (e.g., vpc-v1.0.0 -> vpc)
           TAG_NAME=${GITHUB_REF##*/}
           MODULE_NAME=${TAG_NAME%-*}  # Get everything before the last '-'
           VERSION=${TAG_NAME#*-}       # Get everything after the first '-'
@@ -37,31 +37,33 @@ jobs:
           fi
           echo "Module directory ${MODULE_NAME} exists."
 
-      # - name: Create release
-      #   id: create_release
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     name: Release ${{ github.ref }} # Corrected from 'release_name'
-      #     draft: false
-      #     prerelease: false
-      #     files: |
-      #       ${{ env.MODULE_NAME }}/main.tf
-      #       ${{ env.MODULE_NAME }}/outputs.tf
-      #       ${{ env.MODULE_NAME }}/variables.tf
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Optional: Clean up unwanted files (e.g., .git or other source code directories)
+      - name: Remove unnecessary files (e.g., .git)
+        run: |
+          rm -rf .git  # This removes the Git history (source code) and any .git-related files
 
-      - name: Upload binaries to release
+      # Optional: Copy only the necessary files from the module directory to a release directory
+      - name: Copy module files to release directory
+        run: |
+          # Create a release folder and copy only the relevant files (e.g., .tf files)
+          mkdir -p release
+          cp -r ${{ env.MODULE_NAME }}/* release/  # Copy everything from the module's directory to 'release/'
+
+      - name: List files to be uploaded (for debugging)
+        run: |
+          echo "Listing files to be uploaded:"
+          ls -R release/
+
+      - name: Upload release files
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ env.MODULE_NAME }}/*.tf # the folder which has all the files that you want to release
+          file: release/* # Upload only the contents of the 'release' folder
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
 
-      - name: List files in release directory (for debugging)
+      - name: List uploaded files (for debugging)
         run: |
-          echo "Files to include in release:"
-          ls -R ${{ env.MODULE_NAME }}
+          echo "Files uploaded to the release:"
+          ls -R release/
