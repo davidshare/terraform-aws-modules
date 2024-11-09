@@ -37,21 +37,29 @@ jobs:
           fi
           echo "Module directory ${MODULE_NAME} exists."
 
-      - name: Create release
-        id: create_release
-        uses: softprops/action-gh-release@v1
+      # - name: Create release
+      #   id: create_release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     tag_name: ${{ github.ref }}
+      #     name: Release ${{ github.ref }} # Corrected from 'release_name'
+      #     draft: false
+      #     prerelease: false
+      #     files: |
+      #       ${{ env.MODULE_NAME }}/main.tf
+      #       ${{ env.MODULE_NAME }}/outputs.tf
+      #       ${{ env.MODULE_NAME }}/variables.tf
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          tag_name: ${{ github.ref }}
-          name: Release ${{ github.ref }} # Corrected from 'release_name'
-          draft: false
-          prerelease: false
-          files: |
-            ${{ env.MODULE_NAME }}/main.tf
-            ${{ env.MODULE_NAME }}/outputs.tf
-            ${{ env.MODULE_NAME }}/variables.tf
-            # List other files for the specific module, or use a wildcard if applicable
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.MODULE_NAME }}/*.tf # the folder which has all the files that you want to release
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
 
       - name: List files in release directory (for debugging)
         run: |
