@@ -1,1 +1,0 @@
-## Launch templates module
