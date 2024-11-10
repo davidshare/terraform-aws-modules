@@ -1,9 +1,9 @@
-name: Create Module Releases
+name: Create Module Release from Branch
 
 on:
   push:
     tags:
-      - "*-v*" # Match tags that contain a module name followed by "-v"
+      - "*-v*" # Matches any tag containing a module name followed by "-v"
 
 jobs:
   release:
@@ -15,55 +15,42 @@ jobs:
       issues: write
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up variables
-        id: vars
+      - name: Extract module and version from tag
+        id: extract
         run: |
-          # Extract the module name from the tag (e.g., vpc-v1.0.0 -> vpc)
+          # Extract module name (e.g., vpc) and version (e.g., v1.0.2) from tag
           TAG_NAME=${GITHUB_REF##*/}
-          MODULE_NAME=${TAG_NAME%-*}  # Get everything before the last '-'
-          VERSION=${TAG_NAME#*-}       # Get everything after the first '-'
+          MODULE_NAME=${TAG_NAME%-*}  # Everything before the last '-'
+          VERSION=${TAG_NAME#*-}      # Everything after the first '-'
+
+          # Construct branch name (e.g., vpc-module)
+          BRANCH_NAME="${MODULE_NAME}-module"
+
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
           echo "MODULE_NAME=${MODULE_NAME}" >> $GITHUB_ENV
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
 
-      - name: Check if module directory exists
-        id: check_module
-        run: |
-          if [ ! -d "${MODULE_NAME}" ]; then
-            echo "Module directory ${MODULE_NAME} does not exist."
-            exit 1
-          fi
-          echo "Module directory ${MODULE_NAME} exists."
-
-      # Optional: Clean up unwanted files (e.g., .git or other source code directories)
-      - name: Remove unnecessary files (e.g., .git)
-        run: |
-          rm -rf .git  # This removes the Git history (source code) and any .git-related files
-
-      # Optional: Copy only the necessary files from the module directory to a release directory
-      - name: Copy module files to release directory
-        run: |
-          # Create a release folder and copy only the relevant files (e.g., .tf files)
-          mkdir -p release
-          cp -r ${{ env.MODULE_NAME }}/* release/  # Copy everything from the module's directory to 'release/'
-
-      - name: List files to be uploaded (for debugging)
-        run: |
-          echo "Listing files to be uploaded:"
-          ls -R release/
-
-      - name: Upload release files
-        uses: svenstaro/upload-release-action@v2
+      - name: Checkout the module branch
+        uses: actions/checkout@v2
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: release/* # Upload only the contents of the 'release' folder
-          tag: ${{ github.ref }}
-          overwrite: true
-          file_glob: true
+          ref: ${{ env.BRANCH_NAME }} # Check out the specific module branch
 
-      - name: List uploaded files (for debugging)
+      - name: Confirm branch checkout
         run: |
-          echo "Files uploaded to the release:"
-          ls -R release/
+          echo "Checked out branch: $(git branch --show-current)"
+
+      - name: List module files (optional, for verification)
+        run: ls -R
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ env.TAG_NAME }} # Use the pushed tag for the release
+          release_name: "${{ env.MODULE_NAME }} v${{ env.VERSION }}"
+          draft: false
+          prerelease: false
+          body: "Release of module ${{ env.MODULE_NAME }} version ${{ env.VERSION }}"
+          files: |
+            ./* # Include all files in the branch; adjust as needed for specific files
