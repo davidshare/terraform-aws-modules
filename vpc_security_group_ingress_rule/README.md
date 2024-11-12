@@ -7,8 +7,6 @@ This Terraform module manages an inbound (ingress) rule for an AWS security grou
 - **Link to Documentation:** https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule
 - **Terraform version:** 5.75.1
 
-## Terraform version
-
 ## Resource Overview
 
 The `aws_vpc_security_group_ingress_rule` resource is specifically designed to manage individual ingress rules in a security group, offering more granular control than the in-line `aws_security_group` ingress configuration. By defining each ingress rule as a separate resource, this module helps prevent conflicts when managing multiple CIDR blocks and enables better tracking and tagging.
