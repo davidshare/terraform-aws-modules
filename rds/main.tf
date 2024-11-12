@@ -51,10 +51,10 @@ resource "aws_db_instance" "this" {
   apply_immediately           = var.apply_immediately
   maintenance_window          = var.maintenance_window
 
-  skip_final_snapshot       = var.skip_final_snapshot
-  copy_tags_to_snapshot     = var.copy_tags_to_snapshot
-  backup_retention_period   = var.backup_retention_period
-  backup_window             = var.backup_window
+  skip_final_snapshot     = var.skip_final_snapshot
+  copy_tags_to_snapshot   = var.copy_tags_to_snapshot
+  backup_retention_period = var.backup_retention_period
+  backup_window           = var.backup_window
 
   tags = var.tags
 }

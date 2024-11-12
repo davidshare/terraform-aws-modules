@@ -18,7 +18,7 @@ resource "aws_eks_cluster" "this" {
     }
   }
 
-  version = var.kubernetes_version
+  version                   = var.kubernetes_version
   enabled_cluster_log_types = var.enabled_cluster_log_types
 
   dynamic "encryption_config" {

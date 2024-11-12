@@ -32,7 +32,7 @@ output "nat_gateway_network_interface_id" {
 
 output "nat_gateway_private_ip" {
   description = "The private IP address of the NAT Gateway"
-  value       =  aws_nat_gateway.this.private_ip
+  value       = aws_nat_gateway.this.private_ip
 }
 
 output "nat_gateway_public_ip" {

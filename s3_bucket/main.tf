@@ -69,7 +69,7 @@ resource "aws_s3_bucket" "this" {
   }
 
   dynamic "server_side_encryption_configuration" {
-    for_each = length(keys(var.server_side_encryption_configuration)) == 0  ? [] : [var.server_side_encryption_configuration]
+    for_each = length(keys(var.server_side_encryption_configuration)) == 0 ? [] : [var.server_side_encryption_configuration]
     content {
       rule {
         apply_server_side_encryption_by_default {

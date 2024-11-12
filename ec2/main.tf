@@ -1,22 +1,22 @@
 resource "aws_instance" "this" {
-  ami                         = var.ami
-  instance_type               = var.instance_type
-  key_name                    = var.key_name
-  vpc_security_group_ids      = var.vpc_security_group_ids
-  subnet_id                   = var.subnet_id
-  associate_public_ip_address = var.associate_public_ip_address
-  availability_zone           = var.availability_zone
-  disable_api_termination     = var.disable_api_termination
-  ebs_optimized               = var.ebs_optimized
-  get_password_data           = var.get_password_data
-  hibernation                 = var.hibernation
-  iam_instance_profile        = var.iam_instance_profile
+  ami                                  = var.ami
+  instance_type                        = var.instance_type
+  key_name                             = var.key_name
+  vpc_security_group_ids               = var.vpc_security_group_ids
+  subnet_id                            = var.subnet_id
+  associate_public_ip_address          = var.associate_public_ip_address
+  availability_zone                    = var.availability_zone
+  disable_api_termination              = var.disable_api_termination
+  ebs_optimized                        = var.ebs_optimized
+  get_password_data                    = var.get_password_data
+  hibernation                          = var.hibernation
+  iam_instance_profile                 = var.iam_instance_profile
   instance_initiated_shutdown_behavior = var.instance_initiated_shutdown_behavior
-  ipv6_address_count          = var.ipv6_address_count
-  ipv6_addresses              = var.ipv6_addresses
-  monitoring                  = var.monitoring
-  placement_group             = var.placement_group
-  private_ip                  = var.private_ip
+  ipv6_address_count                   = var.ipv6_address_count
+  ipv6_addresses                       = var.ipv6_addresses
+  monitoring                           = var.monitoring
+  placement_group                      = var.placement_group
+  private_ip                           = var.private_ip
 
   dynamic "root_block_device" {
     for_each = var.root_block_device

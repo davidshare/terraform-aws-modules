@@ -12,10 +12,10 @@ variable "description" {
 variable "appversion_lifecycle" {
   description = "Application version lifecycle configuration"
   type = object({
-    service_role           = string
-    max_count              = number
-    delete_source_from_s3  = bool
-    max_age_in_days        = number
+    service_role          = string
+    max_count             = number
+    delete_source_from_s3 = bool
+    max_age_in_days       = number
   })
   default = null
 }
