@@ -1,11 +1,11 @@
 resource "aws_iam_role" "this" {
-  name               = var.name
-  assume_role_policy = var.assume_role_policy
-  tags               = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "this" {
-  count      = length(var.policies)
-  role       = aws_iam_role.this.name
-  policy_arn = var.policies[count.index]
+  name                  = var.name
+  name_prefix           = var.name_prefix
+  path                  = var.path
+  description           = var.description
+  assume_role_policy    = var.assume_role_policy
+  max_session_duration  = var.max_session_duration
+  permissions_boundary  = var.permissions_boundary
+  force_detach_policies = var.force_detach_policies
+  tags                  = var.tags
 }

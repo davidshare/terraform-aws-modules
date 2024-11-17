@@ -10,5 +10,5 @@ resource "aws_vpc_security_group_egress_rule" "this" {
   prefix_list_id               = var.prefix_list_id != "" ? var.prefix_list_id : null
   referenced_security_group_id = var.referenced_security_group_id != "" ? var.referenced_security_group_id : null
 
-  tags              = var.tags
+  tags = var.tags
 }

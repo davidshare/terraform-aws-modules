@@ -1,23 +1,36 @@
-data "aws_iam_policy_document" "this" {
-  policy_id = var.policy_id
-  version   = var.version
+data "aws_iam_policy_document" "example" {
+  version = var.version
 
+  # Iterate over the statements from the input variable
   dynamic "statement" {
-    for_each = var.statement
+    for_each = var.statements
     content {
       sid       = statement.value.sid
-      effect    = statement.value.effect
       actions   = statement.value.actions
+      effect    = statement.value.effect
       resources = statement.value.resources
 
-      dynamic "condition" {
-        for_each = statement.value.condition
+      not_actions    = statement.value.not_actions
+      not_resources  = statement.value.not_resources
+      not_principals = statement.value.not_principals
+
+      condition {
+        test     = statement.value.condition_test
+        variable = statement.value.condition_variable
+        values   = statement.value.condition_values
+      }
+
+      # Define principals for the statement
+      dynamic "principals" {
+        for_each = statement.value.principals
         content {
-          test     = condition.value.test
-          variable = condition.value.variable
-          values   = condition.value.values
+          type        = principals.value.type
+          identifiers = principals.value.identifiers
         }
       }
     }
   }
+
+  source_policy_documents   = var.source_policy_documents
+  override_policy_documents = var.override_policy_documents
 }
