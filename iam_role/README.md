@@ -1,4 +1,3 @@
-````markdown
 # AWS IAM Role Terraform Module
 
 ## Description
@@ -42,7 +41,6 @@ module "iam_role" {
   }
 }
 ```
-````
 
 ## Inputs
 
@@ -77,8 +75,3 @@ module "iam_role" {
 ## License
 
 This module is released under the MIT License.
-
-```
-
-Let me know if you need any modifications!
-```
