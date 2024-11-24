@@ -1,7 +1,5 @@
 AWS Terraform Module: Elastic Beanstalk Application
 
-## Brief Description
-
 This AWS Terraform module provisions and manages an Elastic Beanstalk application. It allows you to define and manage an application name, description, and associated version lifecycle configurations. Additionally, it supports tagging resources for organization and management purposes.
 
 ---

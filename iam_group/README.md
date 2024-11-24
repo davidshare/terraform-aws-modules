@@ -1,7 +1,5 @@
 # AWS Terraform Module: IAM Group
 
-## Brief Description
-
 This AWS Terraform module creates and manages an IAM group within AWS, including the ability to add users and attach IAM policies to the group. The module simplifies the process of organizing IAM users into groups and managing their permissions through policy attachments.
 
 ---

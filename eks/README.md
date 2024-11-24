@@ -1,7 +1,5 @@
 # AWS Terraform Module: EKS Cluster
 
-## Brief Description
-
 This AWS Terraform module provisions an Amazon EKS (Elastic Kubernetes Service) cluster. The module is designed to simplify the creation and configuration of an EKS cluster, providing flexible options for networking, logging, encryption, and other advanced settings.
 
 ---

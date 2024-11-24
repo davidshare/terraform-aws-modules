@@ -1,7 +1,5 @@
 # AWS Terraform Module: Elastic IP
 
-## Brief Description
-
 This AWS Terraform module manages the allocation and association of Elastic IP (EIP) addresses for use with EC2 instances and network interfaces within a VPC. It supports optional configurations like associating EIPs with private IP addresses, customer-owned IP pools, and IPAM pools, providing flexibility in managing network resources.
 
 ---

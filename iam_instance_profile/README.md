@@ -1,7 +1,5 @@
 # AWS Terraform Module: IAM Instance Profile
 
-## Brief Description
-
 This Terraform module is used to create and manage an IAM instance profile in AWS. An IAM instance profile is associated with an EC2 instance, allowing it to assume IAM roles and gain the associated permissions. This module allows for the configuration of instance profiles, including assigning IAM roles, setting tags, and defining names or name prefixes.
 
 ---

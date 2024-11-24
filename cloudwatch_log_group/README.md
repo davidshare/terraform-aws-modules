@@ -1,7 +1,5 @@
 # AWS CloudWatch Log Group Terraform Module
 
-## Brief Description
-
 This Terraform module facilitates the creation and management of AWS CloudWatch Log Groups with support for customizable configurations like retention periods, encryption, and tagging.
 
 ## Purpose of the Module
