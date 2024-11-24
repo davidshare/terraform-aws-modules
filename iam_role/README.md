@@ -1,77 +1,169 @@
-# AWS IAM Role Terraform Module
+### AWS IAM Role Terraform Module
 
-## Description
+**Brief Description**  
+The AWS IAM Role Terraform Module allows you to create and manage IAM roles in AWS, including options for defining role descriptions, session duration, and assume role policies. This module is useful for configuring IAM roles with custom permissions and tags in a Terraform-managed AWS infrastructure.
 
-This Terraform module creates and manages an AWS IAM Role with configurable parameters such as name, path, assume role policy, tags, and more. It also allows you to manage inline and managed policies associated with the role.
+---
 
-## Features
+### Usage
 
-- Create an IAM Role with an optional description, name, and path.
-- Attach inline policies or managed policies (deprecated options).
-- Support for assume role policies and permissions boundaries.
-- Configurable maximum session duration.
-- Flexible tagging support.
-
-## Usage
+To use this module in your Terraform configuration, reference it as shown below:
 
 ```hcl
 module "iam_role" {
-  source = "./modules/aws_iam_role"
+  source = "./iam_role"
 
-  name                = "example-role"
-  assume_role_policy  = jsonencode({
+  name               = "my-iam-role"
+  assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Sid    = ""
+        Action    = "sts:AssumeRole"
+        Effect    = "Allow"
         Principal = {
           Service = "ec2.amazonaws.com"
         }
-      },
+      }
     ]
   })
-  description         = "An example IAM role"
-  force_detach_policies = true
-  max_session_duration = 3600
   tags = {
-    Environment = "production"
-    Team        = "devops"
+    Environment = "Production"
+    Project     = "WebApp"
   }
 }
 ```
 
-## Inputs
+**Explanation of Key Parameters**:
 
-| Name                    | Type           | Default | Description                                                                |
-| ----------------------- | -------------- | ------- | -------------------------------------------------------------------------- |
-| `name`                  | `string`       | `null`  | Friendly name of the role. Conflicts with `name_prefix`.                   |
-| `name_prefix`           | `string`       | `null`  | Prefix for the role name. Conflicts with `name`.                           |
-| `path`                  | `string`       | `"/"`   | Path to the role.                                                          |
-| `assume_role_policy`    | `string`       | n/a     | **(Required)** Policy that grants an entity permission to assume the role. |
-| `description`           | `string`       | `null`  | Description of the role.                                                   |
-| `force_detach_policies` | `bool`         | `false` | Whether to force detach policies before destroying the role.               |
-| `inline_policies`       | `list(object)` | `[]`    | List of inline policies. Each object requires `name` and `policy` keys.    |
-| `managed_policy_arns`   | `list(string)` | `[]`    | List of managed policy ARNs to attach.                                     |
-| `max_session_duration`  | `number`       | `3600`  | Maximum session duration (in seconds) for the role.                        |
-| `permissions_boundary`  | `string`       | `null`  | ARN of the policy used as the permissions boundary for the role.           |
-| `tags`                  | `map(string)`  | `{}`    | Key-value mapping of tags for the role.                                    |
+- `name`: The name of the IAM role. This is a required parameter.
+- `assume_role_policy`: A JSON string defining the policy that grants entities permission to assume this role. This is required.
+- `tags`: Optional key-value tags that can be assigned to the IAM role.
 
-## Outputs
+---
 
-| Name        | Description               |
-| ----------- | ------------------------- |
-| `role_arn`  | The ARN of the IAM role.  |
-| `role_name` | The name of the IAM role. |
-| `role_id`   | The ID of the IAM role.   |
+### Requirements
 
-## Notes
+| **Terraform Version** | **AWS Provider Version** |
+| --------------------- | ------------------------ |
+| `>= 1.0.0`            | `>= 3.0.0`               |
 
-1. When modifying the role name or path, set `force_detach_policies` to `true` to avoid `DeleteConflict` errors.
-2. If you use `inline_policies` or `managed_policy_arns`, this resource will exclusively manage those policies. Avoid managing them via other methods like `aws_iam_policy_attachment`.
-3. For consistent and error-free JSON policies, use `jsonencode()` or the `aws_iam_policy_document` data source.
+---
 
-## License
+### Providers
 
-This module is released under the MIT License.
+| **Provider** | **Version** |
+| ------------ | ----------- |
+| `aws`        | `>= 3.0.0`  |
+
+---
+
+### Features
+
+- **Custom Role Names**: Define a custom IAM role name or use a prefix.
+- **Assume Role Policy**: Set the assume role policy to specify trusted entities that can assume the role.
+- **Session Duration**: Configure the maximum session duration for role assumptions.
+- **Permissions Boundary**: Optionally define a permissions boundary for role permissions.
+- **Tags**: Add custom tags to the IAM role for organizational purposes.
+
+---
+
+### Explanation of Files
+
+| **File**       | **Description**                                                 |
+| -------------- | --------------------------------------------------------------- |
+| `main.tf`      | Defines the IAM role resource and its configuration.            |
+| `variables.tf` | Contains input variables for customizing the IAM role creation. |
+| `outputs.tf`   | Defines the output values such as IAM role ID, ARN, etc.        |
+| `README.md`    | Documentation for the IAM role Terraform module.                |
+
+---
+
+### Inputs
+
+| **Variable**            | **Description**                                                      | **Type**      | **Default** | **Required** |
+| ----------------------- | -------------------------------------------------------------------- | ------------- | ----------- | ------------ |
+| `name`                  | Friendly name of the IAM role. Conflicts with `name_prefix`.         | `string`      | `null`      | Yes          |
+| `name_prefix`           | Prefix for the IAM role name. Conflicts with `name`.                 | `string`      | `null`      | No           |
+| `path`                  | Path to the IAM role.                                                | `string`      | `/`         | No           |
+| `description`           | Description of the IAM role.                                         | `string`      | `null`      | No           |
+| `assume_role_policy`    | The assume role policy in JSON format.                               | `string`      |             | Yes          |
+| `max_session_duration`  | Maximum session duration (in seconds) for the IAM role.              | `number`      | `3600`      | No           |
+| `permissions_boundary`  | ARN of the policy used as the permissions boundary for the IAM role. | `string`      | `null`      | No           |
+| `force_detach_policies` | Whether to force detaching policies before destroying the role.      | `bool`        | `false`     | No           |
+| `tags`                  | Key-value mapping of tags for the IAM role.                          | `map(string)` | `{}`        | No           |
+
+---
+
+### Outputs
+
+| **Output**  | **Description**                |
+| ----------- | ------------------------------ |
+| `id`        | The ID of the IAM role.        |
+| `arn`       | The ARN of the IAM role.       |
+| `name`      | The name of the IAM role.      |
+| `unique_id` | The unique ID of the IAM role. |
+
+---
+
+### Example Usage
+
+#### Simple Role Creation
+
+```hcl
+module "iam_role_simple" {
+  source = "./iam_role"
+
+  name               = "my-simple-iam-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action    = "sts:AssumeRole"
+        Effect    = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+```
+
+#### Role with Permissions Boundary and Tags
+
+```hcl
+module "iam_role_with_permissions_boundary" {
+  source = "./iam_role"
+
+  name               = "my-iam-role-with-boundary"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action    = "sts:AssumeRole"
+        Effect    = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+  permissions_boundary = "arn:aws:iam::aws:policy/AdministratorAccess"
+  tags = {
+    Environment = "Dev"
+    Team        = "DevOps"
+  }
+}
+```
+
+---
+
+### Authors
+
+This module is maintained by [David Essien](https://davidessien.com).
+
+---
+
+### License
+
+This module is licensed under the MIT License. See [LICENSE](LICENSE) for more information.
