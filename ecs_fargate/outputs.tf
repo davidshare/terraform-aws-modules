@@ -1,9 +1,9 @@
-output "cluster_id" {
+output "id" {
   description = "ID of the ECS cluster"
   value       = aws_ecs_cluster.this.id
 }
 
-output "cluster_arn" {
+output "arn" {
   description = "ARN of the ECS cluster"
   value       = aws_ecs_cluster.this.arn
 }
