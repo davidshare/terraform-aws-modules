@@ -37,20 +37,20 @@ module "sqs_queue" {
 
 ---
 
-### **Requirements**
+### Requirements
 
-| **Dependency** | **Version** |
-| -------------- | ----------- |
-| Terraform      | >= 1.3.0    |
-| AWS Provider   | >= 4.0      |
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
-### **Providers**
+### Providers
 
-| **Name** | **Source**    |
-| -------- | ------------- |
-| `aws`    | hashicorp/aws |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 
@@ -85,11 +85,11 @@ module "sqs_queue" {
 
 ### **Outputs**
 
-| **Name**         | **Description**                   |
-| ---------------- | --------------------------------- |
-| `id`   | The URL of the created SQS queue. |
-| `arn`  | The ARN of the SQS queue.         |
-| `name` | The name of the SQS queue.        |
+| **Name** | **Description**                   |
+| -------- | --------------------------------- |
+| `id`     | The URL of the created SQS queue. |
+| `arn`    | The ARN of the SQS queue.         |
+| `name`   | The name of the SQS queue.        |
 
 ---
 

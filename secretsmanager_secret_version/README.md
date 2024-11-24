@@ -31,20 +31,20 @@ module "secret_version" {
 
 ---
 
-### **Requirements**
+### Requirements
 
-| **Dependency** | **Version** |
-| -------------- | ----------- |
-| Terraform      | >= 1.3.0    |
-| AWS Provider   | >= 4.0      |
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
-### **Providers**
+### Providers
 
-| **Name** | **Source**    |
-| -------- | ------------- |
-| `aws`    | hashicorp/aws |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 
@@ -71,11 +71,11 @@ module "secret_version" {
 
 ### **Outputs**
 
-| **Name**                | **Description**                                                              |
-| ----------------------- | ---------------------------------------------------------------------------- |
-| `id`     | The unique identifier of the secret version.                                 |
-| `stages` | The list of staging labels currently attached to this version of the secret. |
-| `secret_string`         | The secret value stored in this version (use with caution).                  |
+| **Name**        | **Description**                                                              |
+| --------------- | ---------------------------------------------------------------------------- |
+| `id`            | The unique identifier of the secret version.                                 |
+| `stages`        | The list of staging labels currently attached to this version of the secret. |
+| `secret_string` | The secret value stored in this version (use with caution).                  |
 
 ---
 

@@ -51,20 +51,20 @@ module "vpc" {
 
 ---
 
-### **Requirements**
+### Requirements
 
-| **Dependency** | **Version** |
-| -------------- | ----------- |
-| Terraform      | >= 1.3.0    |
-| AWS Provider   | >= 4.0      |
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
-### **Providers**
+### Providers
 
-| **Name** | **Source**    |
-| -------- | ------------- |
-| `aws`    | hashicorp/aws |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 

@@ -34,19 +34,20 @@ module "rds" {
 
 ---
 
-## Requirements
+### Requirements
 
-| **Terraform** | **AWS Provider** |
-| ------------- | ---------------- |
-| >= 1.3.0      | >= 4.0           |
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
-## Providers
+### Providers
 
-| **Provider** | **Purpose**                  |
-| ------------ | ---------------------------- |
-| `aws`        | Interacts with AWS resources |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 

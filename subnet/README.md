@@ -36,20 +36,20 @@ module "subnet" {
 
 ---
 
-### **Requirements**
+### Requirements
 
-| **Dependency** | **Version** |
-| -------------- | ----------- |
-| Terraform      | >= 1.3.0    |
-| AWS Provider   | >= 4.0      |
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
-### **Providers**
+### Providers
 
-| **Name** | **Source**    |
-| -------- | ------------- |
-| `aws`    | hashicorp/aws |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 
@@ -87,8 +87,8 @@ module "subnet" {
 
 ### **Outputs**
 
-| **Name**                                | **Description**                               |
-| --------------------------------------- | --------------------------------------------- |
+| **Name**                         | **Description**                               |
+| -------------------------------- | --------------------------------------------- |
 | `id`                             | The ID of the created subnet.                 |
 | `arn`                            | The Amazon Resource Name (ARN) of the subnet. |
 | `ipv6_cidr_block_association_id` | The association ID for the IPv6 CIDR block.   |

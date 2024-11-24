@@ -41,20 +41,20 @@ module "lambda_function" {
 
 ---
 
-## Requirements
+### Requirements
 
-| Name      | Version |
-| --------- | ------- |
-| Terraform | >= 1.0  |
-| AWS       | >= 4.0  |
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
-## Providers
+### Providers
 
-| Name | Version |
-| ---- | ------- |
-| AWS  | >= 4.0  |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 
@@ -161,4 +161,3 @@ Maintained by [David Essien](https://davidessien.com).
 ## License
 
 This project is licensed under the MIT License.
-

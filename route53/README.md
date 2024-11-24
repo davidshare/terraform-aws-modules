@@ -36,6 +36,7 @@ module "route53" {
 ---
 
 ### **Features**
+
 - Creates public or private hosted zones.
 - Supports optional VPC association for private hosted zones.
 - Automatically manages DNS records in the hosted zone.
@@ -43,52 +44,52 @@ module "route53" {
 
 ---
 
-### **Requirements**
+### Requirements
 
-| **Dependency** | **Version** |
-|----------------|-------------|
-| Terraform      | >= 1.3.0    |
-| AWS Provider   | >= 4.0      |
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
-### **Providers**
+### Providers
 
-| **Name**     | **Source**           |
-|--------------|----------------------|
-| `aws`        | hashicorp/aws        |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 
 ### **Explanation of Files**
 
-| **File**         | **Description**                                                     |
-|-------------------|---------------------------------------------------------------------|
-| `main.tf`         | Defines the hosted zone and records resources.                     |
-| `variables.tf`    | Contains input variables for zone configuration and DNS records.   |
-| `outputs.tf`      | Provides outputs such as the zone ID and name servers.             |
+| **File**       | **Description**                                                  |
+| -------------- | ---------------------------------------------------------------- |
+| `main.tf`      | Defines the hosted zone and records resources.                   |
+| `variables.tf` | Contains input variables for zone configuration and DNS records. |
+| `outputs.tf`   | Provides outputs such as the zone ID and name servers.           |
 
 ---
 
 ### **Inputs**
 
-| **Name**           | **Description**                                                     | **Type**     | **Default** | **Required** |
-|--------------------|---------------------------------------------------------------------|--------------|-------------|--------------|
-| `zone_name`        | The name of the hosted zone (e.g., `example.com`).                 | `string`     | N/A         | Yes          |
-| `comment`          | A comment for the hosted zone.                                     | `string`     | `null`      | No           |
-| `vpc_id`           | VPC ID to associate with a private hosted zone (if applicable).    | `string`     | `null`      | No           |
-| `force_destroy`    | Whether to destroy all records in the zone when destroying it.     | `bool`       | `false`     | No           |
-| `records`          | List of DNS records (name, type, TTL, values).                     | `list(object)` | `[]`      | No           |
-| `tags`             | A map of tags to add to all resources.                             | `map(string)`| `{}`        | No           |
+| **Name**        | **Description**                                                 | **Type**       | **Default** | **Required** |
+| --------------- | --------------------------------------------------------------- | -------------- | ----------- | ------------ |
+| `zone_name`     | The name of the hosted zone (e.g., `example.com`).              | `string`       | N/A         | Yes          |
+| `comment`       | A comment for the hosted zone.                                  | `string`       | `null`      | No           |
+| `vpc_id`        | VPC ID to associate with a private hosted zone (if applicable). | `string`       | `null`      | No           |
+| `force_destroy` | Whether to destroy all records in the zone when destroying it.  | `bool`         | `false`     | No           |
+| `records`       | List of DNS records (name, type, TTL, values).                  | `list(object)` | `[]`        | No           |
+| `tags`          | A map of tags to add to all resources.                          | `map(string)`  | `{}`        | No           |
 
 ---
 
 ### **Outputs**
 
-| **Name**          | **Description**                                                   |
-|-------------------|-------------------------------------------------------------------|
-| `zone_id`         | The ID of the created hosted zone.                               |
-| `name_servers`    | List of name servers associated with the hosted zone.            |
+| **Name**       | **Description**                                       |
+| -------------- | ----------------------------------------------------- |
+| `zone_id`      | The ID of the created hosted zone.                    |
+| `name_servers` | List of name servers associated with the hosted zone. |
 
 ---
 
@@ -145,6 +146,7 @@ module "private_zone" {
 ---
 
 ### **Features Supported for DNS Records**
+
 - **Record Types**: A, AAAA, CNAME, TXT, SRV, PTR, MX, etc.
 - **TTL**: Adjustable Time-to-Live for DNS records.
 - **Multi-record Support**: Allows multiple values for a single record.
@@ -152,9 +154,11 @@ module "private_zone" {
 ---
 
 ### **Authors**
+
 Maintained by [David Essien](https://davidessien.com)
 
 ---
 
 ### **License**
+
 This project is licensed under the MIT License.

@@ -31,20 +31,20 @@ module "iam_group" {
 
 ---
 
-## Requirements
+### Requirements
 
-| **Requirement** | **Version** |
-| --------------- | ----------- |
-| Terraform       | >= 1.0.0    |
-| AWS Provider    | >= 4.0      |
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
-## Providers
+### Providers
 
-| **Provider** | **Purpose**            |
-| ------------ | ---------------------- |
-| `aws`        | Manages AWS resources. |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 

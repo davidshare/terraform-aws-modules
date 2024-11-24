@@ -42,19 +42,20 @@ module "cloudwatch_metric_alarm" {
 
 ---
 
-## Requirements
+### Requirements
 
-| Terraform Version | AWS Provider Version |
-| ----------------- | -------------------- |
-| 1.0+              | 3.50+                |
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
-## Providers
+### Providers
 
-| Provider | Version |
-| -------- | ------- |
-| `aws`    | 3.50+   |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 
@@ -103,10 +104,10 @@ module "cloudwatch_metric_alarm" {
 
 ## Outputs
 
-| Output      | Description                             |
-| ----------- | --------------------------------------- |
-| `arn` | The ARN of the CloudWatch Metric Alarm. |
-| `id`  | The ID of the CloudWatch Metric Alarm.  |
+| Output | Description                             |
+| ------ | --------------------------------------- |
+| `arn`  | The ARN of the CloudWatch Metric Alarm. |
+| `id`   | The ID of the CloudWatch Metric Alarm.  |
 
 ---
 

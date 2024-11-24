@@ -35,18 +35,18 @@ module "ecr_repository" {
 
 ### Requirements
 
-| Name      | Version  |
-| --------- | -------- |
-| Terraform | >= 1.3.0 |
-| AWS       | >= 4.0.0 |
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
 ### Providers
 
-| Name | Version |
-| ---- | ------- |
-| AWS  | >= 4.0  |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 

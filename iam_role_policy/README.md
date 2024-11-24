@@ -36,17 +36,18 @@ module "iam_role_policy" {
 
 ### Requirements
 
-| **Terraform Version** | **AWS Provider Version** |
-| --------------------- | ------------------------ |
-| `>= 1.0.0`            | `>= 3.0.0`               |
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
 ### Providers
 
-| **Provider** | **Version** |
-| ------------ | ----------- |
-| `aws`        | `>= 3.0.0`  |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 
@@ -84,9 +85,9 @@ module "iam_role_policy" {
 
 | **Output**        | **Description**                                                             |
 | ----------------- | --------------------------------------------------------------------------- |
-| `id`       | The ID of the IAM role policy, in the form of `role_name:role_policy_name`. |
-| `name`     | The name of the IAM role policy.                                            |
-| `document` | The policy document attached to the role.                                   |
+| `id`              | The ID of the IAM role policy, in the form of `role_name:role_policy_name`. |
+| `name`            | The name of the IAM role policy.                                            |
+| `document`        | The policy document attached to the role.                                   |
 | `associated_role` | The name of the role associated with the policy.                            |
 
 ---

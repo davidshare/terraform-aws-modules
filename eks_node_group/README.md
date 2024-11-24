@@ -44,6 +44,23 @@ module "eks_node_group" {
 
 ---
 
+### Requirements
+
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
+
+---
+
+### Providers
+
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
+
+---
+
 ### Explanation of Files
 
 | File           | Description                                              |

@@ -38,20 +38,20 @@ module "lb_listener" {
 
 ---
 
-## Requirements
+### Requirements
 
-| Requirement  | Version  |
-| ------------ | -------- |
-| Terraform    | >= 1.3.0 |
-| AWS Provider | >= 4.0.0 |
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
-## Providers
+### Providers
 
-| Provider | Purpose                                      |
-| -------- | -------------------------------------------- |
-| `aws`    | Manages AWS Load Balancer Listener resources |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 
@@ -92,8 +92,8 @@ module "lb_listener" {
 
 ## Outputs
 
-| Name           | Description                                |
-| -------------- | ------------------------------------------ |
+| Name  | Description                                |
+| ----- | ------------------------------------------ |
 | `arn` | ARN of the created load balancer listener. |
 | `id`  | ID of the created load balancer listener.  |
 

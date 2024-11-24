@@ -55,18 +55,18 @@ module "dynamodb_table" {
 
 ## **Requirements**
 
-| Requirement  | Version  |
-| ------------ | -------- |
-| Terraform    | >= 1.3.0 |
-| AWS Provider | >= 5.0.0 |
+| Requirement  | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
 ## **Providers**
 
-| Provider | Source    | Version  |
-| -------- | --------- | -------- |
-| `aws`    | HashiCorp | >= 5.0.0 |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 

@@ -30,18 +30,18 @@ module "db_subnet_group" {
 
 ## **Requirements**
 
-| Requirement  | Version  |
-| ------------ | -------- |
-| Terraform    | >= 1.3.0 |
-| AWS Provider | >= 5.0.0 |
+| Requirement  | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
 ## **Providers**
 
-| Provider | Source    | Version  |
-| -------- | --------- | -------- |
-| `aws`    | HashiCorp | >= 5.0.0 |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 
@@ -80,8 +80,8 @@ module "db_subnet_group" {
 
 | Name                      | Description                                                                  |
 | ------------------------- | ---------------------------------------------------------------------------- |
-| `id`      | The ID of the DB subnet group.                                               |
-| `arn`     | The ARN of the DB subnet group.                                              |
+| `id`                      | The ID of the DB subnet group.                                               |
+| `arn`                     | The ARN of the DB subnet group.                                              |
 | `name`                    | The name of the DB subnet group.                                             |
 | `supported_network_types` | The network types supported by the DB subnet group.                          |
 | `vpc_id`                  | The VPC ID associated with the DB subnet group.                              |

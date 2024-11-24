@@ -35,6 +35,23 @@ module "iam_policy_document" {
 
 ---
 
+### Requirements
+
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
+
+---
+
+### Providers
+
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
+
+---
+
 ### Files Overview
 
 - **`main.tf`**: Contains the `aws_iam_policy_document` data source, which dynamically generates the IAM policy document based on input variables.

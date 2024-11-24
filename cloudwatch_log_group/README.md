@@ -38,19 +38,20 @@ module "cloudwatch_log_group" {
 
 ---
 
-## Requirements
+### Requirements
 
-| Terraform Version | AWS Provider Version |
-| ----------------- | -------------------- |
-| 1.0+              | 3.50+                |
+| Name         | Version   |
+| ------------ | --------- |
+| Terraform    | >= 1.7.5  |
+| AWS Provider | >= 5.77.0 |
 
 ---
 
-## Providers
+### Providers
 
-| Provider | Version |
-| -------- | ------- |
-| `aws`    | 3.50+   |
+| Provider | Source    | Version   |
+| -------- | --------- | --------- |
+| `aws`    | HashiCorp | >= 5.77.0 |
 
 ---
 
@@ -90,8 +91,8 @@ module "cloudwatch_log_group" {
 
 ## Outputs
 
-| Output           | Description                           |
-| ---------------- | ------------------------------------- |
+| Output | Description                           |
+| ------ | ------------------------------------- |
 | `arn`  | The ARN of the CloudWatch Log Group.  |
 | `name` | The name of the CloudWatch Log Group. |
 
