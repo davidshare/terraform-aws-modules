@@ -1,19 +1,19 @@
-output "iam_group_name" {
+output "name" {
   description = "The group's name"
   value       = aws_iam_group.this.name
 }
 
-output "iam_group_id" {
+output "id" {
   description = "The group's ID"
   value       = aws_iam_group.this.id
 }
 
-output "iam_group_arn" {
+output "arn" {
   description = "The ARN assigned by AWS for this group"
   value       = aws_iam_group.this.arn
 }
 
-output "iam_group_unique_id" {
+output "unique_id" {
   description = "The unique ID assigned by AWS"
   value       = aws_iam_group.this.unique_id
 }
