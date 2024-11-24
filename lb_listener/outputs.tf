@@ -1,9 +1,9 @@
-output "listener_arn" {
+output "arn" {
   description = "ARN of the created load balancer listener."
   value       = aws_lb_listener.this.arn
 }
 
-output "listener_id" {
+output "id" {
   description = "ID of the created load balancer listener."
   value       = aws_lb_listener.this.id
 }

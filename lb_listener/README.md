@@ -1,70 +1,136 @@
-# AWS Load Balancer Listener Module
+# AWS Terraform Module: Load Balancer Listener
 
-This Terraform module creates an AWS Load Balancer Listener (`aws_lb_listener`) resource. It supports multiple listener configurations, including forwarding, fixed responses, redirects, and authentication.
+This module manages the creation of an AWS Load Balancer Listener using Terraform. It supports HTTP, HTTPS, and other protocols, allowing you to define default actions, SSL policies, and other settings. The purpose of the module is to streamline the configuration and deployment of load balancer listeners in AWS.
 
-## Features
-
-- Create listeners for ALBs, NLBs, or Gateway Load Balancers.
-- Configure default actions for forwarding, fixed-response, or redirects.
-- Add authentication options using Cognito or OpenID Connect (OIDC).
-- Full support for SSL/TLS protocols and policies.
-
-## Requirements
-
-- Terraform v1.3.0 or newer
-- AWS provider v5.0 or newer
+---
 
 ## Usage
 
+Below is an example of how to use the module in your Terraform configuration:
+
 ```hcl
 module "lb_listener" {
-  source = "./aws_lb_listener_module"
-
-  load_balancer_arn = aws_lb.front_end.arn
-  port              = 443
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = "arn:aws:iam::123456789012:server-certificate/example"
-
-  default_actions = [
+  source              = "./lb_listener"
+  load_balancer_arn   = "arn:aws:elasticloadbalancing:region:account-id:loadbalancer/app/example-lb/123456"
+  port                = 443
+  protocol            = "HTTPS"
+  ssl_policy          = "ELBSecurityPolicy-2016-08"
+  certificate_arn     = "arn:aws:acm:region:account-id:certificate/123456"
+  default_actions     = [
     {
       type             = "forward"
-      target_group_arn = aws_lb_target_group.front_end.arn
+      target_group_arn = "arn:aws:elasticloadbalancing:region:account-id:targetgroup/example-group/123456"
     }
   ]
-
   tags = {
-    Environment = "Production"
-    Application = "WebApp"
+    Environment = "production"
   }
 }
 ```
 
+### Key Parameters
+
+- **`load_balancer_arn`**: ARN of the load balancer.
+- **`port`**: Port for the listener (default: 80).
+- **`protocol`**: Protocol for connections (default: HTTP).
+- **`ssl_policy`**: SSL policy for HTTPS/TLS connections.
+- **`default_actions`**: List of default actions, e.g., forwarding requests to a target group.
+
+---
+
+## Requirements
+
+| Requirement  | Version  |
+| ------------ | -------- |
+| Terraform    | >= 1.3.0 |
+| AWS Provider | >= 4.0.0 |
+
+---
+
+## Providers
+
+| Provider | Purpose                                      |
+| -------- | -------------------------------------------- |
+| `aws`    | Manages AWS Load Balancer Listener resources |
+
+---
+
+## Features
+
+- Supports multiple protocols, including HTTP, HTTPS, TCP, and TLS.
+- Configurable SSL policies and certificate ARNs for secure connections.
+- Flexible action configuration for forwarding, redirection, and authentication.
+
+---
+
+## Explanation of Files
+
+| File           | Description                                               |
+| -------------- | --------------------------------------------------------- |
+| `main.tf`      | Contains the primary resource definitions for the module. |
+| `variables.tf` | Defines input variables used by the module.               |
+| `outputs.tf`   | Defines output values provided by the module.             |
+| `README.md`    | Documentation of the module's usage and features.         |
+
+---
+
 ## Inputs
 
-| Name                       | Description                                       | Type   | Default | Required |
-| -------------------------- | ------------------------------------------------- | ------ | ------- | -------- |
-| `load_balancer_arn`        | ARN of the load balancer.                         | string | `null`  | yes      |
-| `port`                     | Port on which the load balancer listens.          | number | `80`    | no       |
-| `protocol`                 | Protocol for connections.                         | string | `HTTP`  | no       |
-| `ssl_policy`               | SSL policy name (required for HTTPS/TLS).         | string | `null`  | no       |
-| `certificate_arn`          | ARN of the SSL certificate for HTTPS/TLS.         | string | `null`  | no       |
-| `alpn_policy`              | ALPN policy name for TLS listeners.               | string | `null`  | no       |
-| `tcp_idle_timeout_seconds` | TCP idle timeout in seconds.                      | number | `350`   | no       |
-| `default_actions`          | List of actions to perform for incoming requests. | list   | `[]`    | yes      |
-| `tags`                     | Map of tags to assign to the listener.            | map    | `{}`    | no       |
+| Name                       | Description                                                         | Type     | Default | Required |
+| -------------------------- | ------------------------------------------------------------------- | -------- | ------- | -------- |
+| `load_balancer_arn`        | ARN of the load balancer.                                           | `string` | n/a     | yes      |
+| `port`                     | Port on which the load balancer is listening.                       | `number` | `80`    | no       |
+| `protocol`                 | Protocol for connections (e.g., HTTP, HTTPS, TCP).                  | `string` | `HTTP`  | no       |
+| `ssl_policy`               | SSL policy name. Required for HTTPS or TLS.                         | `string` | `null`  | no       |
+| `certificate_arn`          | ARN of the SSL certificate for HTTPS/TLS protocols.                 | `string` | `null`  | no       |
+| `alpn_policy`              | Name of the ALPN policy for TLS listeners.                          | `string` | `null`  | no       |
+| `tcp_idle_timeout_seconds` | TCP idle timeout in seconds.                                        | `number` | `350`   | no       |
+| `default_actions`          | List of default actions for the listener (e.g., forward, redirect). | `list`   | n/a     | yes      |
+| `tags`                     | A map of tags to assign to the resource.                            | `map`    | `{}`    | no       |
+
+---
 
 ## Outputs
 
 | Name           | Description                                |
 | -------------- | ------------------------------------------ |
-| `listener_arn` | ARN of the created load balancer listener. |
-| `listener_id`  | ID of the created load balancer listener.  |
+| `arn` | ARN of the created load balancer listener. |
+| `id`  | ID of the created load balancer listener.  |
 
-## Examples
+---
 
-- [Basic HTTPS Listener](examples/basic_https.tf)
-- [Redirect HTTP to HTTPS](examples/redirect_http_to_https.tf)
-- [Fixed-Response Listener](examples/fixed_response.tf)
-- [Authenticate Using Cognito](examples/authenticate_cognito.tf)
-- [Authenticate Using OIDC](examples/authenticate_oidc.tf)
+## Example Usage
+
+### HTTPS Listener with SSL Policy
+
+```hcl
+module "https_listener" {
+  source              = "./lb_listener"
+  load_balancer_arn   = "arn:aws:elasticloadbalancing:region:account-id:loadbalancer/app/example-lb/123456"
+  port                = 443
+  protocol            = "HTTPS"
+  ssl_policy          = "ELBSecurityPolicy-2016-08"
+  certificate_arn     = "arn:aws:acm:region:account-id:certificate/123456"
+  default_actions     = [
+    {
+      type             = "forward"
+      target_group_arn = "arn:aws:elasticloadbalancing:region:account-id:targetgroup/example-group/123456"
+    }
+  ]
+  tags = {
+    Environment = "production"
+  }
+}
+```
+
+---
+
+## Authors
+
+Maintained by [David Essien](https://davidessien.com).
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
