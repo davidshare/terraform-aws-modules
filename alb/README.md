@@ -145,7 +145,7 @@ module "network_load_balancer" {
 
 ### **Authors**
 
-This module is maintained by **David Essien** and the [Tersu Labs](https://tersulabs.com) team.
+This module is maintained by **David Essien** and the [David Essien](https://davidessien.com) team.
 
 ---
 
