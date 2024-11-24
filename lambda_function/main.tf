@@ -4,11 +4,11 @@ resource "aws_lambda_function" "this" {
   runtime       = var.runtime
   role          = var.role
 
-  filename          = var.filename
-  s3_bucket         = var.s3_bucket
-  s3_key            = var.s3_key
+  filename         = var.filename
+  s3_bucket        = var.s3_bucket
+  s3_key           = var.s3_key
   s3_object_version = var.s3_object_version
-  source_code_hash  = var.source_code_hash
+  source_code_hash = var.source_code_hash
 
   description = var.description
   layers      = var.layers
