@@ -1,9 +1,9 @@
-output "secret_version_id" {
+output "id" {
   description = "The unique identifier of the secret version."
   value       = aws_secretsmanager_secret_version.this.id
 }
 
-output "secret_version_stages" {
+output "stages" {
   description = "The list of staging labels currently attached to this version of the secret."
   value       = aws_secretsmanager_secret_version.this.version_stages
 }

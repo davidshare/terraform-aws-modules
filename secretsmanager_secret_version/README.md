@@ -1,94 +1,129 @@
-# AWS Secrets Manager Secret Version Module
+### AWS Terraform Module: Secrets Manager Secret Version
 
-This Terraform module manages an **AWS Secrets Manager Secret Version**, enabling you to store and manage the values of secrets securely. This complements the `aws_secretsmanager_secret` module, which manages the secret metadata.
-
-## Usage
-
-### Simple String Value
-
-```hcl
-module "secret_version" {
-  source = "./modules/aws_secretsmanager_secret_version"
-
-  secret_id     = aws_secretsmanager_secret.example.id
-  secret_string = "example-string-to-protect"
-}
-```
-
-### Key-Value Pairs
-
-```hcl
-variable "example" {
-  description = "Key-value pairs to store in the secret"
-  type        = map(string)
-  default = {
-    key1 = "value1"
-    key2 = "value2"
-  }
-}
-
-module "secret_version" {
-  source = "./modules/aws_secretsmanager_secret_version"
-
-  secret_id     = aws_secretsmanager_secret.example.id
-  secret_string = jsonencode(var.example)
-}
-```
-
-### Binary Secret Value
-
-```hcl
-module "secret_version_binary" {
-  source = "./modules/aws_secretsmanager_secret_version"
-
-  secret_id     = aws_secretsmanager_secret.example.id
-  secret_binary = base64encode("example-binary-data")
-}
-```
-
-## Inputs
-
-| Name             | Type           | Default | Description                                                                                |
-| ---------------- | -------------- | ------- | ------------------------------------------------------------------------------------------ |
-| `secret_id`      | `string`       | -       | Specifies the secret to which you want to add a new version. Accepts ARN or friendly name. |
-| `secret_string`  | `string`       | `null`  | Text data to encrypt and store in this version. Required if `secret_binary` is not set.    |
-| `secret_binary`  | `string`       | `null`  | Binary data (base64-encoded) to encrypt and store. Required if `secret_string` is not set. |
-| `version_stages` | `list(string)` | `[]`    | List of staging labels for the secret version. Defaults to moving the `AWSCURRENT` label.  |
-
-## Outputs
-
-| Name                    | Description                                                                  |
-| ----------------------- | ---------------------------------------------------------------------------- |
-| `secret_version_id`     | The unique identifier of the secret version.                                 |
-| `secret_version_stages` | The list of staging labels currently attached to this version of the secret. |
-
-## Notes
-
-- **Conflicts Between `secret_string` and `secret_binary`**: These arguments are mutually exclusive, so one must be set but not both.
-- **Base64 Encoding for `secret_binary`**: Ensure that `secret_binary` values are properly encoded using `base64encode()` if you provide binary data.
-- **Version Stages**: AWS automatically moves the `AWSCURRENT` label to new versions unless otherwise specified with `version_stages`.
-
-## Authors
-
-This module is maintained by [Your Name/Organization]. Contributions are welcome!
+This Terraform module is designed to manage versions of AWS Secrets Manager secrets, allowing you to securely store and rotate sensitive data.
 
 ---
 
-### Key Features:
+### **Usage**
 
-1. **Supports All Arguments**:
+#### Example Configuration
 
-   - `secret_id` to link to an existing secret.
-   - `secret_string` or `secret_binary` for storing data securely.
-   - Optional `version_stages` for controlling labels.
+```hcl
+module "secret_version" {
+  source = "./secretsmanager_secret_version"
 
-2. **Flexible Configuration**:
+  secret_id      = "my-secret"
+  secret_string  = jsonencode({
+    username = "admin"
+    password = "P@ssw0rd!"
+  })
+  version_stages = ["AWSCURRENT"]
+}
+```
 
-   - Use simple strings, key-value pairs (JSON), or binary data as needed.
+---
 
-3. **Detailed Documentation**:
+### **Features**
 
-   - Provides examples for all major use cases (simple strings, key-value pairs, binary secrets).
+- **Secret String/Binary:** Supports storing either text (`secret_string`) or base64-encoded binary data (`secret_binary`).
+- **Version Stages:** Manage staging labels for the secret version, like `AWSCURRENT` or custom labels.
+- **Automatic Encryption:** Secrets are encrypted using the AWS Secrets Manager default encryption key or a specified KMS key in the secret.
 
-4. **Secure Practices**:
-   - Encourages use of `jsonencode` for key-value secrets and `base64encode` for binary secrets.
+---
+
+### **Requirements**
+
+| **Dependency** | **Version** |
+| -------------- | ----------- |
+| Terraform      | >= 1.3.0    |
+| AWS Provider   | >= 4.0      |
+
+---
+
+### **Providers**
+
+| **Name** | **Source**    |
+| -------- | ------------- |
+| `aws`    | hashicorp/aws |
+
+---
+
+### **Explanation of Files**
+
+| **File**       | **Description**                                                            |
+| -------------- | -------------------------------------------------------------------------- |
+| `main.tf`      | Contains the Secrets Manager secret version resource.                      |
+| `variables.tf` | Defines all input variables for customizing the secret version.            |
+| `outputs.tf`   | Exports key properties of the created secret version for downstream usage. |
+
+---
+
+### **Inputs**
+
+| **Name**         | **Description**                                                                                      | **Type**       | **Default** | **Required** |
+| ---------------- | ---------------------------------------------------------------------------------------------------- | -------------- | ----------- | ------------ |
+| `secret_id`      | Specifies the secret to which the new version will be added. Accepts ARN or name of the secret.      | `string`       | N/A         | Yes          |
+| `secret_string`  | Specifies the text data to encrypt and store. Required if `secret_binary` is not set.                | `string`       | `null`      | No           |
+| `secret_binary`  | Specifies binary data (base64-encoded) to encrypt and store. Required if `secret_string` is not set. | `string`       | `null`      | No           |
+| `version_stages` | A list of staging labels attached to this version. Defaults to automatically moving `AWSCURRENT`.    | `list(string)` | `[]`        | No           |
+
+---
+
+### **Outputs**
+
+| **Name**                | **Description**                                                              |
+| ----------------------- | ---------------------------------------------------------------------------- |
+| `id`     | The unique identifier of the secret version.                                 |
+| `stages` | The list of staging labels currently attached to this version of the secret. |
+| `secret_string`         | The secret value stored in this version (use with caution).                  |
+
+---
+
+### **Example Usages**
+
+#### Storing a Text Secret
+
+```hcl
+module "text_secret" {
+  source        = "./secretsmanager_secret_version"
+  secret_id     = "my-text-secret"
+  secret_string = "my-sensitive-data"
+}
+```
+
+#### Storing a JSON-Encoded Secret
+
+```hcl
+module "json_secret" {
+  source = "./secretsmanager_secret_version"
+
+  secret_id     = "json-secret"
+  secret_string = jsonencode({
+    api_key = "123456789"
+    region  = "us-west-2"
+  })
+}
+```
+
+#### Storing a Binary Secret
+
+```hcl
+module "binary_secret" {
+  source = "./secretsmanager_secret_version"
+
+  secret_id     = "binary-secret"
+  secret_binary = base64encode("SensitiveBinaryData")
+}
+```
+
+---
+
+### **Authors**
+
+Maintained by [David Essien](https://davidessien.com).
+
+---
+
+### **License**
+
+This project is licensed under the MIT License.
