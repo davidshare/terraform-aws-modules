@@ -1,82 +1,145 @@
-# AWS Elastic IP (EIP) Terraform Module
+# AWS Terraform Module: Elastic IP
 
-This module provides an Elastic IP (EIP) resource for AWS, allowing you to allocate an EIP and associate it with an EC2 instance or network interface. It supports various configurations, including IPAM pool allocation, BYOIP, and custom tagging.
+## Brief Description
+
+This AWS Terraform module manages the allocation and association of Elastic IP (EIP) addresses for use with EC2 instances and network interfaces within a VPC. It supports optional configurations like associating EIPs with private IP addresses, customer-owned IP pools, and IPAM pools, providing flexibility in managing network resources.
+
+---
 
 ## Usage
 
+### Example Configuration
+
 ```hcl
-module "eip" {
-  source                    = "./path_to_eip_module"
-  domain                    = "vpc"
-  instance_id               = aws_instance.example.id
-  associate_with_private_ip = "10.0.0.12"
-  tags                      = {
-    Name = "example-eip"
+module "elastic_ip" {
+  source                   = "./elastic_ip"
+  domain                   = "vpc"
+  instance_id              = "i-0abcd1234efgh5678"
+  associate_with_private_ip = "10.0.0.10"
+  tags = {
+    Environment = "Production"
+    Owner       = "Network Team"
   }
 }
 ```
 
-## Inputs
+### Explanation of Key Parameters
 
-| Name                        | Description                                                              | Type          | Default | Required |
-| --------------------------- | ------------------------------------------------------------------------ | ------------- | ------- | -------- |
-| `address`                   | IP address from an EC2 BYOIP pool                                        | `string`      | `null`  | no       |
-| `associate_with_private_ip` | Primary or secondary private IP address to associate with the Elastic IP | `string`      | `null`  | no       |
-| `customer_owned_ipv4_pool`  | ID of a customer-owned address pool                                      | `string`      | `null`  | no       |
-| `domain`                    | Indicates if this EIP is for use in VPC (`vpc`)                          | `string`      | `"vpc"` | no       |
-| `instance_id`               | EC2 instance ID to associate with the EIP                                | `string`      | `null`  | no       |
-| `ipam_pool_id`              | ID of an IPAM pool for Amazon-provided or BYOIP public IPv4 CIDR         | `string`      | `null`  | no       |
-| `network_border_group`      | Location to advertise the IP address from                                | `string`      | `null`  | no       |
-| `network_interface`         | Network interface ID to associate with the EIP                           | `string`      | `null`  | no       |
-| `public_ipv4_pool`          | EC2 IPv4 address pool identifier or amazon                               | `string`      | `null`  | no       |
-| `tags`                      | Map of tags to assign to the resource                                    | `map(string)` | `{}`    | no       |
+- **`domain`**: Specifies the domain for the Elastic IP address (typically "vpc" for use in VPC).
+- **`instance_id`**: EC2 instance ID to associate the Elastic IP with (optional).
+- **`network_interface`**: Network interface ID to associate the Elastic IP with (optional).
+- **`associate_with_private_ip`**: Private IP address to associate with the Elastic IP (optional).
+- **`tags`**: A map of tags to assign to the Elastic IP for management and organization.
 
-## Outputs
-
-| Name                | Description                                                    |
-| ------------------- | -------------------------------------------------------------- |
-| `allocation_id`     | The allocation ID for the Elastic IP                           |
-| `association_id`    | The association ID for the Elastic IP                          |
-| `carrier_ip`        | Carrier IP address (if applicable)                             |
-| `customer_owned_ip` | Customer-owned IP address (if applicable)                      |
-| `id`                | ID containing the EIP allocation ID                            |
-| `private_dns`       | Private DNS associated with the EIP (if in VPC)                |
-| `private_ip`        | Private IP address associated with the EIP                     |
-| `ptr_record`        | DNS pointer (PTR) record for the IP address                    |
-| `public_dns`        | Public DNS associated with the EIP                             |
-| `public_ip`         | Public IP address                                              |
-| `tags_all`          | Map of tags assigned to the resource, including inherited ones |
-
-## Example Configurations
-
-### Single EIP Associated with an Instance
-
-```hcl
-module "eip" {
-  source  = "./path_to_eip_module"
-  instance_id = aws_instance.example.id
-  domain      = "vpc"
-}
-```
-
-### Multiple EIPs Associated with a Network Interface
-
-```hcl
-module "multi_eip" {
-  source = "./path_to_eip_module"
-
-  network_interface         = aws_network_interface.example.id
-  associate_with_private_ip = "10.0.0.10"
-  domain                    = "vpc"
-}
-```
+---
 
 ## Requirements
 
-- Terraform 1.0 or newer
-- AWS Provider 3.0 or newer
+| **Requirement** | **Version** |
+| --------------- | ----------- |
+| Terraform       | >= 1.0.0    |
+| AWS Provider    | >= 4.0      |
 
-## Notes
+---
 
-- Ensure the Internet Gateway exists before associating an EIP with an instance. Use `depends_on` to manage dependencies on the IGW.
-- For resources like `aws_lb` or `aws_nat_gateway`, use `allocation_id` instead of `network_interface` to avoid `AuthFailure` errors.
+## Providers
+
+| **Provider** | **Purpose**            |
+| ------------ | ---------------------- |
+| `aws`        | Manages AWS resources. |
+
+---
+
+## Features
+
+- Allocates and associates Elastic IPs with EC2 instances or network interfaces.
+- Supports associating EIPs with private IP addresses.
+- Allows use of customer-owned IP pools and IPAM pools.
+- Provides flexibility in specifying domain and network border group.
+- Tags all resources for better management.
+
+---
+
+## Explanation of Files
+
+| **File**       | **Description**                                                                                        |
+| -------------- | ------------------------------------------------------------------------------------------------------ |
+| `main.tf`      | Defines the `aws_eip` resource, including configuration for allocation and association of Elastic IPs. |
+| `variables.tf` | Declares input variables to configure the Elastic IP resource.                                         |
+| `outputs.tf`   | Provides outputs such as allocation ID, association ID, and public IP address.                         |
+| `README.md`    | Documentation for the module.                                                                          |
+
+---
+
+## Inputs
+
+| **Variable**                | **Description**                                                 | **Type**      | **Default** | **Required** |
+| --------------------------- | --------------------------------------------------------------- | ------------- | ----------- | ------------ |
+| `domain`                    | Indicates if the EIP is for use in VPC (use 'vpc').             | `string`      | `"vpc"`     | No           |
+| `instance_id`               | EC2 instance ID to associate the Elastic IP with (optional).    | `string`      | `null`      | No           |
+| `network_interface`         | Network interface ID to associate with (optional).              | `string`      | `null`      | No           |
+| `associate_with_private_ip` | Private IP address to associate with the Elastic IP (optional). | `string`      | `null`      | No           |
+| `customer_owned_ipv4_pool`  | ID of a customer-owned IP address pool (optional).              | `string`      | `null`      | No           |
+| `ipam_pool_id`              | The ID of an IPAM pool to allocate the IP from (optional).      | `string`      | `null`      | No           |
+| `network_border_group`      | Location from which the IP address is advertised (optional).    | `string`      | `null`      | No           |
+| `public_ipv4_pool`          | EC2 IPv4 address pool identifier (optional).                    | `string`      | `null`      | No           |
+| `tags`                      | A map of tags to apply to the Elastic IP resource.              | `map(string)` | `{}`        | No           |
+
+---
+
+## Outputs
+
+| **Output**          | **Description**                                                                   |
+| ------------------- | --------------------------------------------------------------------------------- |
+| `allocation_id`     | ID that AWS assigns to represent the allocation of the Elastic IP address.        |
+| `association_id`    | ID representing the association of the EIP with an instance or network interface. |
+| `carrier_ip`        | Carrier IP address if applicable.                                                 |
+| `customer_owned_ip` | Customer-owned IP address if applicable.                                          |
+| `public_ip`         | Public IP address assigned to the instance or network interface.                  |
+| `private_ip`        | Private IP address associated with the Elastic IP address.                        |
+| `ptr_record`        | DNS PTR record for the IP address.                                                |
+| `public_dns`        | Public DNS associated with the Elastic IP address.                                |
+| `private_dns`       | Private DNS associated with the Elastic IP address.                               |
+
+---
+
+## Example Usage
+
+### Basic Elastic IP Association
+
+```hcl
+module "elastic_ip_basic" {
+  source      = "./elastic_ip"
+  instance_id = "i-0abcd1234efgh5678"
+  tags = {
+    Environment = "Staging"
+    Owner       = "Network Team"
+  }
+}
+```
+
+### Elastic IP with Customer-Owned IP
+
+```hcl
+module "elastic_ip_customer_owned" {
+  source                   = "./elastic_ip"
+  domain                   = "vpc"
+  customer_owned_ipv4_pool = "pool-abc123"
+  tags = {
+    Environment = "Production"
+    Owner       = "Network Team"
+  }
+}
+```
+
+---
+
+## Authors
+
+This module is maintained by [David Essien](https://davidessien.com).
+
+---
+
+## License
+
+This project is licensed under the MIT License. See `LICENSE` for more information.
