@@ -1,118 +1,147 @@
-# AWS Auto Scaling Policy Terraform Module
+# AWS Auto Scaling Policy Module
 
-A Terraform module to create and manage **AWS Auto Scaling Policies**. This module supports different scaling policy types, including `SimpleScaling`, `StepScaling`, `TargetTrackingScaling`, and `PredictiveScaling`, to dynamically adjust the size of an Auto Scaling Group based on your requirements.
-
-## Features
-
-- Support for all scaling policy types: `SimpleScaling`, `StepScaling`, `TargetTrackingScaling`, and `PredictiveScaling`.
-- Configurable adjustment types, scaling adjustments, cooldown periods, and more.
-- Target tracking scaling with predefined or customized CloudWatch metrics.
-- Predictive scaling for advanced workload forecasting.
-- Compatibility with any existing Auto Scaling Group.
+The **AWS Auto Scaling Policy Terraform Module** provides a simple and flexible way to define and manage scaling policies for AWS Auto Scaling Groups. The module enables dynamic, step-based, target tracking, and predictive scaling strategies, empowering users to automate their scaling policies with various configurations. By using this module, users can efficiently manage their scaling policies, ensuring the optimal performance and cost efficiency of their Auto Scaling Groups.
 
 ---
 
 ## Usage
 
-### Example: Simple Scaling Policy
+### Code Example:
 
 ```hcl
-module "simple_scaling_policy" {
-  source                = "./path-to-module"
-  name                  = "simple-scaling-policy"
-  autoscaling_group_name = aws_autoscaling_group.example.name
-  adjustment_type       = "ChangeInCapacity"
-  scaling_adjustment    = 3
-  cooldown              = 300
-}
-```
-
-### Example: Target Tracking Scaling Policy
-
-```hcl
-module "target_tracking_policy" {
-  source                = "./path-to-module"
-  name                  = "target-tracking-policy"
-  autoscaling_group_name = aws_autoscaling_group.example.name
-  policy_type           = "TargetTrackingScaling"
+module "autoscaling_policy" {
+  source                  = "./autoscaling_policy"
+  name                    = "example-policy"
+  autoscaling_group_name    = "example-asg"
+  adjustment_type         = "ChangeInCapacity"
+  policy_type             = "SimpleScaling"
+  scaling_adjustment      = 2
+  cooldown                = 300
   target_tracking_configuration = {
     target_value = 50
-    predefined_metric_specification = {
-      predefined_metric_type = "ASGAverageCPUUtilization"
-    }
   }
 }
 ```
 
-### Example: Predictive Scaling Policy
+### Key Parameters:
 
-```hcl
-module "predictive_scaling_policy" {
-  source                = "./path-to-module"
-  name                  = "predictive-scaling-policy"
-  autoscaling_group_name = aws_autoscaling_group.example.name
-  policy_type           = "PredictiveScaling"
-  predictive_scaling_configuration = {
-    metric_specification = {
-      target_value = 20
-      predefined_load_metric_specification = {
-        predefined_metric_type = "ASGTotalCPUUtilization"
-        resource_label         = "app/my-alb/target-group-id"
-      }
-    }
-  }
-}
-```
+- `name`: The name of the scaling policy (required).
+- `autoscaling_group_name`: The name of the Auto Scaling group to which the policy applies (required).
+- `adjustment_type`: Defines whether the scaling adjustment is an absolute number or a percentage (`ChangeInCapacity`, `ExactCapacity`, `PercentChangeInCapacity`).
+- `policy_type`: Type of scaling policy (`SimpleScaling`, `StepScaling`, `TargetTrackingScaling`, `PredictiveScaling`).
+- `scaling_adjustment`: The number of instances to add or remove.
+- `cooldown`: Time in seconds between scaling activities.
+
+---
+
+## Requirements
+
+| Requirement  | Version |
+| ------------ | ------- |
+| Terraform    | >= 1.0  |
+| AWS Provider | >= 3.0  |
+
+---
+
+## Providers
+
+| Provider | Version |
+| -------- | ------- |
+| `aws`    | >= 3.0  |
+
+---
+
+## Features
+
+- **Dynamic Scaling Policies**: Enables scaling based on capacity changes.
+- **Predictive Scaling**: Utilizes anticipated demand for proactive scaling.
+- **Target Tracking**: Maintains performance goals with automatic adjustments.
+- **Step Scaling**: Creates policies with multiple scaling adjustments.
+- **Custom Metric Support**: Leverages custom CloudWatch metrics for scaling decisions.
+
+---
+
+## Explanation of Files
+
+| File           | Description                                                                |
+| -------------- | -------------------------------------------------------------------------- |
+| `main.tf`      | Contains the main logic for defining the AWS Auto Scaling policy resource. |
+| `variables.tf` | Defines input variables used in the module for configuration.              |
+| `outputs.tf`   | Defines the output values that will be returned after module execution.    |
+| `README.md`    | Provides the documentation and usage details for the module.               |
 
 ---
 
 ## Inputs
 
-| Name                               | Description                                                                                              | Type     | Default           | Required |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------- | -------- | ----------------- | -------- |
-| `name`                             | Name of the scaling policy.                                                                              | `string` | n/a               | Yes      |
-| `autoscaling_group_name`           | Name of the Auto Scaling Group.                                                                          | `string` | n/a               | Yes      |
-| `adjustment_type`                  | Adjustment type: `ChangeInCapacity`, `ExactCapacity`, or `PercentChangeInCapacity`.                      | `string` | `null`            | No       |
-| `scaling_adjustment`               | Number of instances to scale up or down. Applicable for SimpleScaling and StepScaling policies only.     | `number` | `null`            | No       |
-| `cooldown`                         | Cooldown period (in seconds) between scaling activities.                                                 | `number` | `null`            | No       |
-| `policy_type`                      | Type of scaling policy: `SimpleScaling`, `StepScaling`, `TargetTrackingScaling`, or `PredictiveScaling`. | `string` | `"SimpleScaling"` | No       |
-| `target_tracking_configuration`    | Configuration block for target tracking scaling policies.                                                | `object` | `null`            | No       |
-| `predictive_scaling_configuration` | Configuration block for predictive scaling policies.                                                     | `object` | `null`            | No       |
+| Variable                           | Description                                                                                             | Type   | Default         | Required |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------- | ------ | --------------- | -------- |
+| `name`                             | Name of the scaling policy.                                                                             | string | N/A             | Yes      |
+| `autoscaling_group_name`           | The name of the Auto Scaling Group to associate with this policy.                                       | string | N/A             | Yes      |
+| `adjustment_type`                  | The type of adjustment (`ChangeInCapacity`, `ExactCapacity`, `PercentChangeInCapacity`).                | string | null            | No       |
+| `policy_type`                      | The scaling policy type (`SimpleScaling`, `StepScaling`, `TargetTrackingScaling`, `PredictiveScaling`). | string | "SimpleScaling" | No       |
+| `estimated_instance_warmup`        | Time in seconds for the new instance to contribute CloudWatch metrics.                                  | number | null            | No       |
+| `enabled`                          | Whether the scaling policy is enabled.                                                                  | bool   | true            | No       |
+| `predictive_scaling_configuration` | Configuration for predictive scaling policy (optional).                                                 | object | null            | No       |
+| `min_adjustment_magnitude`         | Minimum value to scale by when adjustment type is set to `PercentChangeInCapacity`.                     | number | null            | No       |
+| `cooldown`                         | Time in seconds between scaling activities.                                                             | number | null            | No       |
+| `scaling_adjustment`               | Number of instances to add/remove during scaling activity.                                              | number | null            | No       |
+| `metric_aggregation_type`          | Aggregation type for policy metrics (`Minimum`, `Maximum`, `Average`).                                  | string | null            | No       |
+| `step_adjustment`                  | List of adjustments for step scaling policies.                                                          | list   | []              | No       |
+| `target_tracking_configuration`    | Configuration for target tracking scaling policy (optional).                                            | object | null            | No       |
 
 ---
 
 ## Outputs
 
-| Name                  | Description                          |
-| --------------------- | ------------------------------------ |
-| `scaling_policy_id`   | The ID of the Auto Scaling Policy.   |
-| `scaling_policy_name` | The name of the Auto Scaling Policy. |
-| `scaling_policy_arn`  | The ARN of the Auto Scaling Policy.  |
+| Output                   | Description                                                               |
+| ------------------------ | ------------------------------------------------------------------------- |
+| `arn`                    | The ARN assigned to the scaling policy.                                   |
+| `name`                   | The name of the scaling policy.                                           |
+| `autoscaling_group_name` | The name of the Auto Scaling group that the scaling policy is applied to. |
+| `adjustment_type`        | The adjustment type for the scaling policy (`ChangeInCapacity`, etc.).    |
+| `policy_type`            | The type of scaling policy (`SimpleScaling`, `StepScaling`, etc.).        |
 
 ---
 
-## How It Works
+## Example Usage
 
-1. **SimpleScaling**: Adjust the number of instances in an Auto Scaling Group based on predefined rules, such as scaling by a specific number or percentage.
-2. **StepScaling**: Perform step-based scaling actions based on CloudWatch alarms and thresholds.
-3. **TargetTrackingScaling**: Scale dynamically to maintain a target value of a specific metric, such as CPU utilization.
-4. **PredictiveScaling**: Use machine learning models to predict traffic and scale in advance of anticipated demand.
+### Example 1: Simple Scaling Policy
 
----
+```hcl
+module "autoscaling_policy" {
+  source                  = "./autoscaling_policy"
+  name                    = "simple-scaling-policy"
+  autoscaling_group_name    = "my-auto-scaling-group"
+  adjustment_type         = "ChangeInCapacity"
+  policy_type             = "SimpleScaling"
+  scaling_adjustment      = 1
+  cooldown                = 300
+}
+```
 
-## Prerequisites
+### Example 2: Target Tracking Scaling Policy
 
-- An AWS Auto Scaling Group must be created beforehand.
-- Ensure appropriate IAM permissions are in place to manage Auto Scaling Policies.
+```hcl
+module "autoscaling_policy" {
+  source                  = "./autoscaling_policy"
+  name                    = "target-tracking-policy"
+  autoscaling_group_name    = "my-auto-scaling-group"
+  policy_type             = "TargetTrackingScaling"
+  target_tracking_configuration = {
+    target_value = 50
+  }
+}
+```
 
 ---
 
 ## Authors
 
-This module is maintained by **[Your Name/Organization]**.
+This module is maintained by [David Essien](https://davidessien.com).
 
 ---
 
 ## License
 
-This project is licensed under the **MIT License**. See the `LICENSE` file for more details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
