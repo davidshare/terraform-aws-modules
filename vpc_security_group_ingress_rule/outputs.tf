@@ -1,5 +1,5 @@
 
-output "security_group_rule_id" {
+output "id" {
   description = "The ID of the created security group ingress rule."
   value       = aws_vpc_security_group_ingress_rule.this.id
 }

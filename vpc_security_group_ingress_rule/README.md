@@ -1,100 +1,149 @@
-# AWS VPC Security Group Ingress Rule Module
+### AWS Terraform Module: VPC Security Group Ingress Rule
 
-This Terraform module manages an inbound (ingress) rule for an AWS security group within a Virtual Private Cloud (VPC), following the best practices for AWS security group rules.
+This Terraform module creates an **AWS VPC Security Group Ingress Rule**, which defines inbound traffic rules for an AWS security group.
 
-## Resource Details
+---
 
-- **Link to Documentation:** https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule
-- **Terraform version:** 5.75.1
+### **Usage**
 
-## Resource Overview
-
-The `aws_vpc_security_group_ingress_rule` resource is specifically designed to manage individual ingress rules in a security group, offering more granular control than the in-line `aws_security_group` ingress configuration. By defining each ingress rule as a separate resource, this module helps prevent conflicts when managing multiple CIDR blocks and enables better tracking and tagging.
-
-## Usage
+#### Example Configuration
 
 ```hcl
-module "ingress_rule" {
-  source = "./path-to-module"
+module "security_group_ingress_rule" {
+  source = "./vpc_security_group_ingress_rule"
 
-  security_group_id = aws_security_group.example.id
-  cidr_ipv4         = "10.0.0.0/8"
-  from_port         = 80
-  to_port           = 80
+  security_group_id = "sg-0abcd1234efgh5678"
+  from_port         = 22
+  to_port           = 22
   ip_protocol       = "tcp"
-  description       = "Allow HTTP traffic from VPC"
+  cidr_ipv4         = "0.0.0.0/0"
+  description       = "Allow SSH traffic from any IPv4 address"
   tags = {
-    Name = "http-ingress-rule"
+    Name = "SSH_Ingress_Rule"
   }
 }
 ```
 
-## Module Details
+---
 
-### Arguments
+### **Features**
 
-| Argument                       | Description                                                      | Type          | Required | Default |
-| ------------------------------ | ---------------------------------------------------------------- | ------------- | -------- | ------- |
-| `security_group_id`            | The ID of the security group to associate the ingress rule with. | `string`      | Yes      | N/A     |
-| `cidr_ipv4`                    | The source IPv4 CIDR range.                                      | `string`      | No       | `null`  |
-| `cidr_ipv6`                    | The source IPv6 CIDR range.                                      | `string`      | No       | `null`  |
-| `description`                  | A description for the security group rule.                       | `string`      | No       | `null`  |
-| `from_port`                    | The start of the port range for the rule.                        | `number`      | No       | `null`  |
-| `to_port`                      | The end of the port range for the rule.                          | `number`      | No       | `null`  |
-| `ip_protocol`                  | The IP protocol name or number. Use `-1` for all protocols.      | `string`      | Yes      | N/A     |
-| `prefix_list_id`               | The ID of the source prefix list.                                | `string`      | No       | `null`  |
-| `referenced_security_group_id` | The ID of the source security group referenced in the rule.      | `string`      | No       | `null`  |
-| `tags`                         | A map of tags to assign to the resource.                         | `map(string)` | No       | `{}`    |
+- Configurable sources for traffic:
+  - IPv4 CIDR
+  - IPv6 CIDR
+  - Prefix list
+  - Referenced security group
+- Flexible protocol and port configurations.
+- Supports tagging for better resource management.
 
-**Note**: At least one of `cidr_ipv4`, `cidr_ipv6`, `prefix_list_id`, or `referenced_security_group_id` is required to define the source of the traffic.
+---
 
-### Outputs
+### **Requirements**
 
-| Output                   | Description                                                                |
-| ------------------------ | -------------------------------------------------------------------------- |
-| `security_group_rule_id` | The ID of the created security group ingress rule.                         |
-| `arn`                    | The Amazon Resource Name (ARN) of the created security group ingress rule. |
+| **Dependency** | **Version** |
+| -------------- | ----------- |
+| Terraform      | >= 1.3.0    |
+| AWS Provider   | >= 4.0      |
 
-## Example Configuration
+---
 
-To create a security group with HTTP and HTTPS ingress rules, you can define the security group resource and use this module for each ingress rule:
+### **Providers**
+
+| **Name** | **Source**    |
+| -------- | ------------- |
+| `aws`    | hashicorp/aws |
+
+---
+
+### **Explanation of Files**
+
+| **File**       | **Description**                                                                |
+| -------------- | ------------------------------------------------------------------------------ |
+| `main.tf`      | Defines the ingress rule resource.                                             |
+| `variables.tf` | Specifies input variables for the module.                                      |
+| `outputs.tf`   | Exports key attributes of the ingress rule for use in other Terraform modules. |
+
+---
+
+### **Inputs**
+
+| **Name**                       | **Description**                                                            | **Type**      | **Default** | **Required** |
+| ------------------------------ | -------------------------------------------------------------------------- | ------------- | ----------- | ------------ |
+| `security_group_id`            | The ID of the security group to associate the ingress rule with.           | `string`      | N/A         | Yes          |
+| `cidr_ipv4`                    | The source IPv4 CIDR range for the rule.                                   | `string`      | `null`      | No           |
+| `cidr_ipv6`                    | The source IPv6 CIDR range for the rule.                                   | `string`      | `null`      | No           |
+| `description`                  | A description for the security group rule.                                 | `string`      | `null`      | No           |
+| `from_port`                    | The start of the port range for TCP/UDP protocols or the ICMP/ICMPv6 type. | `number`      | `null`      | No           |
+| `to_port`                      | The end of the port range for TCP/UDP protocols or the ICMP/ICMPv6 code.   | `number`      | `null`      | No           |
+| `ip_protocol`                  | The IP protocol name or number. Use `-1` to allow all protocols.           | `string`      | N/A         | Yes          |
+| `prefix_list_id`               | The ID of the source prefix list.                                          | `string`      | `null`      | No           |
+| `referenced_security_group_id` | The ID of the source security group referenced in the rule.                | `string`      | `null`      | No           |
+| `tags`                         | A map of tags to assign to the ingress rule.                               | `map(string)` | `{}`        | No           |
+
+---
+
+### **Outputs**
+
+| **Name**                 | **Description**                                     |
+| ------------------------ | --------------------------------------------------- |
+| `id` | The ID of the created security group ingress rule.  |
+| `arn`                    | The Amazon Resource Name (ARN) of the ingress rule. |
+
+---
+
+### **Examples**
+
+#### Allow HTTP Traffic from Specific CIDR
 
 ```hcl
+module "allow_http_ingress" {
+  source = "./vpc_security_group_ingress_rule"
 
-  resource "aws_security_group" "example" {
-    name        = "example-sg"
-    description = "Example security group"
-    vpc_id      = aws_vpc.main.id
-    tags = {
-      Name = "example-security-group"
-    }
-  }
-
-  module "http_ingress_rule" {
-    source = "./path-to-module"
-
-    security_group_id = aws_security_group.example.id
-    cidr_ipv4         = "10.0.0.0/8"
-    from_port         = 80
-    to_port           = 80
-    ip_protocol       = "tcp"
-    description       = "Allow HTTP traffic"
-  }
-
-  module "https_ingress_rule" {
-    source = "./path-to-module"
-
-    security_group_id = aws_security_group.example.id
-    cidr_ipv4         = "10.0.0.0/8"
-    from_port         = 443
-    to_port           = 443
-    ip_protocol       = "tcp"
-    description       = "Allow HTTPS traffic"
-  }
-
+  security_group_id = "sg-0abcd1234efgh5678"
+  from_port         = 80
+  to_port           = 80
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "192.168.0.0/16"
+  description       = "Allow HTTP traffic from internal network"
+}
 ```
 
-## Notes
+#### Allow All Traffic from Another Security Group
 
-- **Best Practices**: This module follows AWS best practices by using `aws_vpc_security_group_ingress_rule` as a standalone resource. Avoid using `aws_security_group_rule` or in-line `ingress` configuration in `aws_security_group` to prevent conflicts.
-- **Conditional Attributes**: The module provides flexibility with optional attributes, like CIDR blocks and tags. Use `ip_protocol = -1` to allow all traffic types, which removes the requirement for `from_port` and `to_port`.
+```hcl
+module "allow_all_from_sg" {
+  source = "./vpc_security_group_ingress_rule"
+
+  security_group_id             = "sg-0abcd1234efgh5678"
+  referenced_security_group_id  = "sg-0wxyz7890hijk1234"
+  ip_protocol                   = "-1"
+  description                   = "Allow all inbound traffic from another security group"
+}
+```
+
+#### Allow HTTPS Traffic from IPv6 CIDR
+
+```hcl
+module "allow_https_ipv6" {
+  source = "./vpc_security_group_ingress_rule"
+
+  security_group_id = "sg-0abcd1234efgh5678"
+  from_port         = 443
+  to_port           = 443
+  ip_protocol       = "tcp"
+  cidr_ipv6         = "::/0"
+  description       = "Allow HTTPS traffic from any IPv6 address"
+}
+```
+
+---
+
+### **Authors**
+
+Maintained by [David Essien](https://davidessien.com).
+
+---
+
+### **License**
+
+This project is licensed under the MIT License.
