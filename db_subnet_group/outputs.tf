@@ -1,9 +1,9 @@
-output "db_subnet_group_id" {
+output "id" {
   description = "The ID of the DB subnet group."
   value       = aws_db_subnet_group.this.id
 }
 
-output "db_subnet_group_arn" {
+output "arn" {
   description = "The ARN of the DB subnet group."
   value       = aws_db_subnet_group.this.arn
 }
