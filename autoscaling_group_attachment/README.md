@@ -1,50 +1,126 @@
-# AWS Auto Scaling Attachment Module
+# AWS AUTOSCALING ATTACHMENT MODULE
 
-This Terraform module manages the attachment of load balancers (either Classic Load Balancer or Application Load Balancer, Gateway Load Balancer, or Network Load Balancer target groups) to an Auto Scaling Group.
+This Terraform module creates and manages an AWS Auto Scaling Attachment (`aws_autoscaling_attachment`) for associating an Auto Scaling group with either a Classic Load Balancer (ELB) or a Load Balancer Target Group (ALB/NLB).
 
-## Usage
+---
 
-To use this module, you need to have an Auto Scaling group and either a Classic Load Balancer or a Target Group created in AWS.
-
-### Example Usage:
+### **Usage**
 
 ```hcl
 module "autoscaling_attachment" {
-  source                = "./path/to/your/module"
-  autoscaling_group_name = aws_autoscaling_group.example.name
-  elb                   = aws_elb.example.name
-  lb_target_group_arn   = aws_lb_target_group.example.arn
+  source = "./path-to-module"
+
+  autoscaling_group_name = "my-auto-scaling-group"
+  elb                   = "my-classic-load-balancer"    # Optional: Use if attaching to Classic Load Balancer
+  lb_target_group_arn   = "arn:aws:elasticloadbalancing:..."  # Optional: Use if attaching to a target group
 }
 ```
 
-### Variables:
+---
 
-| Name                     | Description                                                                                           | Type   | Default    |
-| ------------------------ | ----------------------------------------------------------------------------------------------------- | ------ | ---------- |
-| `autoscaling_group_name` | Name of the Auto Scaling Group to associate with the load balancer or target group.                   | string | (Required) |
-| `elb`                    | The name of the Classic Load Balancer to attach to the Auto Scaling group (optional).                 | string | ""         |
-| `lb_target_group_arn`    | ARN of the load balancer target group to attach to the Auto Scaling group (optional).                 | string | ""         |
-| `traffic_source`         | Defines the traffic source for attachment: either "elb" (Classic Load Balancer) or "lb_target_group". | string | "elb"      |
+### **Requirements**
 
-### Outputs:
+| Name         | Version  |
+| ------------ | -------- |
+| Terraform    | >= 1.3.0 |
+| AWS Provider | >= 5.0.0 |
 
-| Name                        | Description                                    |
-| --------------------------- | ---------------------------------------------- |
-| `autoscaling_attachment_id` | The ID of the created Auto Scaling attachment. |
+---
 
-### Explanation:
+### **Providers**
 
-1. **`main.tf`**: This file defines the `aws_autoscaling_attachment` resource. It conditionally attaches either a Classic Load Balancer (`elb`) or a Target Group (`lb_target_group_arn`) to an Auto Scaling Group (`autoscaling_group_name`).
+| Name  | Version  |
+| ----- | -------- |
+| `aws` | >= 5.0.0 |
 
-2. **`variables.tf`**: This file defines the variables for the module:
+---
 
-   - `autoscaling_group_name`: The name of the Auto Scaling group to attach the load balancer or target group.
-   - `elb`: The name of the Classic Load Balancer to attach (optional).
-   - `lb_target_group_arn`: The ARN of the Target Group to attach (optional).
-   - `traffic_source`: Specifies the traffic source, either `elb` for Classic Load Balancer or `lb_target_group` for Target Groups.
+### **Features**
 
-3. **`outputs.tf`**: This file defines an output for the ID of the Auto Scaling attachment resource created.
+- **Classic Load Balancer Support**: Attach an Auto Scaling group to a Classic Load Balancer (ELB).
+- **Target Group Support**: Attach an Auto Scaling group to a Target Group for Application Load Balancer (ALB) or Network Load Balancer (NLB).
+- **Conditional Attachment**: Supports conditional logic for either ELB or Target Group attachment based on the provided inputs.
 
-4. **`README.md`**: Provides documentation for the module, including how to use it, available variables, and the outputs generated.
+---
 
-You can modify the values for `elb` or `lb_target_group_arn` based on whether you're using a Classic Load Balancer or an Application Load Balancer (ALB), Network Load Balancer (NLB), or Gateway Load Balancer target group. This module helps to easily manage the Auto Scaling group attachment to these load balancing resources.
+### **Explanation of Files**
+
+1. **`main.tf`**  
+   Defines the `aws_autoscaling_attachment` resource that attaches an Auto Scaling group to either an ELB or a Target Group.
+
+2. **`variables.tf`**  
+   Declares input variables for the module, including the Auto Scaling group name and optional parameters for the load balancer or target group.
+
+3. **`outputs.tf`**  
+   Outputs the ID of the Auto Scaling Attachment created.
+
+4. **`README.md`**  
+   Provides a guide for using the module, detailing the required and optional inputs, and usage examples.
+
+---
+
+### **Inputs**
+
+| Name                     | Description                                                                           | Type     | Default | Required |
+| ------------------------ | ------------------------------------------------------------------------------------- | -------- | ------- | -------- |
+| `autoscaling_group_name` | The name of the Auto Scaling group to associate with the load balancer.               | `string` | `null`  | Yes      |
+| `elb`                    | The name of the Classic Load Balancer to attach to the Auto Scaling group (optional). | `string` | `null`  | No       |
+| `lb_target_group_arn`    | ARN of the Load Balancer target group to attach to the Auto Scaling group (optional). | `string` | `null`  | No       |
+
+---
+
+### **Outputs**
+
+| Name | Description                            |
+| ---- | -------------------------------------- |
+| `id` | The ID of the Auto Scaling attachment. |
+
+---
+
+### **Example**
+
+#### Example: Attach Auto Scaling Group to Classic Load Balancer
+
+```hcl
+module "asg_attachment_elb" {
+  source = "./path-to-module"
+
+  autoscaling_group_name = "example-asg"
+  elb                   = "my-classic-load-balancer"
+}
+```
+
+#### Example: Attach Auto Scaling Group to Target Group
+
+```hcl
+module "asg_attachment_target_group" {
+  source = "./path-to-module"
+
+  autoscaling_group_name = "example-asg"
+  lb_target_group_arn   = "arn:aws:elasticloadbalancing:..."
+}
+```
+
+#### Example: Conditional Attachment (Both ELB and Target Group)
+
+```hcl
+module "asg_attachment_both" {
+  source = "./path-to-module"
+
+  autoscaling_group_name = "example-asg"
+  elb                   = "my-classic-load-balancer"
+  lb_target_group_arn   = "arn:aws:elasticloadbalancing:..."
+}
+```
+
+---
+
+### **Authors**
+
+This module is maintained by **[David Essien](https://davidessien.com)**.
+
+---
+
+### **License**
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
