@@ -1,101 +1,137 @@
-# AWS Secrets Manager Secret Module
+### AWS Terraform Module: Secrets Manager Secret
 
-This Terraform module manages an **AWS Secrets Manager Secret**, including metadata and replication settings.
+This module provisions AWS Secrets Manager secrets, providing secure storage and replication across regions for sensitive data.
 
-### Features:
+---
 
-1. **Dynamic Replication**:
+### **Usage**
 
-   - Supports multiple replication blocks, each with optional KMS key configuration.
-
-2. **Comprehensive Inputs and Outputs**:
-
-   - Includes all resource arguments and exported attributes.
-
-3. **Detailed Documentation**:
-   - Provides usage examples for both basic and advanced configurations.
-
-## Usage
-
-### Basic Example
+#### Example Configuration
 
 ```hcl
-module "secret" {
-  source = "./modules/aws_secretsmanager_secret"
+module "secrets_manager_secret" {
+  source = "./secretsmanager_secret"
 
-  name        = "example-secret"
-  description = "Example secret for demonstration"
+  name        = "my-secret"
+  description = "API key for external service"
+  kms_key_id  = "arn:aws:kms:us-west-2:123456789012:key/abcd-1234-efgh-5678"
+
+  replica = [
+    {
+      region     = "us-east-1"
+      kms_key_id = "arn:aws:kms:us-east-1:123456789012:key/ijkl-9101-mnop-1121"
+    }
+  ]
+
   tags = {
-    Environment = "production"
-    Application = "my-app"
+    Environment = "Production"
+    Service     = "SecretsManager"
   }
 }
 ```
 
-### Advanced Example with Replication
+---
+
+### **Features**
+
+- **Secret Storage**: Supports creation and management of secrets with optional encryption using a specified KMS key.
+- **Replication**: Allows secret replication across multiple AWS regions for high availability.
+- **Flexible Naming**: Option to specify a friendly name or a name prefix for unique secret creation.
+- **Custom Policies**: Supports attaching a custom resource policy to the secret.
+- **Tagging**: Enables tagging for better resource organization.
+
+---
+
+### **Requirements**
+
+| **Dependency** | **Version** |
+| -------------- | ----------- |
+| Terraform      | >= 1.3.0    |
+| AWS Provider   | >= 4.0      |
+
+---
+
+### **Providers**
+
+| **Name** | **Source**    |
+| -------- | ------------- |
+| `aws`    | hashicorp/aws |
+
+---
+
+### **Explanation of Files**
+
+| **File**       | **Description**                                                    |
+| -------------- | ------------------------------------------------------------------ |
+| `main.tf`      | Contains the Secrets Manager secret resource configuration.        |
+| `variables.tf` | Defines all input variables for configuring the secret.            |
+| `outputs.tf`   | Exports key attributes of the created secret for downstream usage. |
+
+---
+
+### **Inputs**
+
+| **Name**                         | **Description**                                                       | **Type**              | **Default** | **Required** |
+| -------------------------------- | --------------------------------------------------------------------- | --------------------- | ----------- | ------------ |
+| `description`                    | A description of the secret.                                          | `string`              | `null`      | No           |
+| `kms_key_id`                     | ARN or ID of the KMS key used to encrypt the secret.                  | `string`              | `null`      | No           |
+| `name`                           | Friendly name of the secret. Conflicts with `name_prefix`.            | `string`              | `null`      | No           |
+| `name_prefix`                    | Prefix for generating a unique secret name. Conflicts with `name`.    | `string`              | `null`      | No           |
+| `policy`                         | JSON policy to attach to the secret.                                  | `string`              | `null`      | No           |
+| `recovery_window_in_days`        | Number of days AWS waits before deleting the secret. Default is 30.   | `number`              | `30`        | No           |
+| `force_overwrite_replica_secret` | Whether to overwrite a secret with the same name in a replica region. | `bool`                | `false`     | No           |
+| `tags`                           | Key-value map of user-defined tags attached to the secret.            | `map(string)`         | `{}`        | No           |
+| `replica`                        | List of replica configurations.                                       | `list(object({...}))` | `[]`        | No           |
+
+---
+
+### **Outputs**
+
+| **Name**   | **Description**                                                               |
+| ---------- | ----------------------------------------------------------------------------- |
+| `id`       | The ID of the created secret.                                                 |
+| `arn`      | The ARN of the created secret.                                                |
+| `replica`  | Attributes of replicas, including status and last accessed date.              |
+| `tags_all` | All tags assigned to the resource, including inherited provider default tags. |
+
+---
+
+### **Example Usages**
+
+#### Basic Secret
 
 ```hcl
-module "secret_with_replication" {
-  source = "./modules/aws_secretsmanager_secret"
+module "basic_secret" {
+  source = "./secretsmanager_secret"
 
-  name                            = "replicated-secret"
-  description                     = "A secret replicated across regions"
-  kms_key_id                      = "arn:aws:kms:us-west-2:123456789012:key/example"
-  force_overwrite_replica_secret  = true
-  recovery_window_in_days         = 7
-  tags = {
-    Environment = "staging"
-    Application = "my-app"
-  }
+  name        = "basic-secret"
+  description = "A basic secret without replication"
+}
+```
+
+#### Replicated Secret
+
+```hcl
+module "replicated_secret" {
+  source = "./secretsmanager_secret"
+
+  name = "replicated-secret"
+
   replica = [
-    {
-      region     = "us-east-1"
-      kms_key_id = "arn:aws:kms:us-east-1:123456789012:key/example"
-    },
-    {
-      region     = "eu-west-1"
-    }
+    { region = "us-east-1" },
+    { region = "eu-west-1" }
   ]
 }
 ```
 
-## Inputs
+---
 
-### Arguments
+### **Authors**
 
-| Name                             | Type           | Default | Description                                                                |
-| -------------------------------- | -------------- | ------- | -------------------------------------------------------------------------- |
-| `description`                    | `string`       | `null`  | Description of the secret.                                                 |
-| `kms_key_id`                     | `string`       | `null`  | ARN or ID of the KMS key used to encrypt the secret.                       |
-| `name`                           | `string`       | `null`  | Friendly name of the secret. Conflicts with `name_prefix`.                 |
-| `name_prefix`                    | `string`       | `null`  | Prefix for the secret name. Conflicts with `name`.                         |
-| `policy`                         | `string`       | `null`  | JSON document representing a resource policy.                              |
-| `recovery_window_in_days`        | `number`       | `30`    | Number of days AWS Secrets Manager waits before deleting the secret.       |
-| `force_overwrite_replica_secret` | `bool`         | `false` | Overwrite an existing secret with the same name in the destination region. |
-| `tags`                           | `map(string)`  | `{}`    | Key-value map of user-defined tags attached to the secret.                 |
-| `replica`                        | `list(object)` | `[]`    | Configuration for secret replication. Each block must include `region`.    |
+Maintained by [David Essien](https://davidessien.com).
 
-### Replica Attributes
+---
 
-| Key          | Type     | Required | Description                                                  |
-| ------------ | -------- | -------- | ------------------------------------------------------------ |
-| `region`     | `string` | Yes      | Region where the secret will be replicated.                  |
-| `kms_key_id` | `string` | No       | KMS key in the destination region for encrypting the secret. |
+### **License**
 
-## Outputs
-
-| Name       | Description                                                     |
-| ---------- | --------------------------------------------------------------- |
-| `id`       | ARN of the secret.                                              |
-| `arn`      | ARN of the secret.                                              |
-| `replica`  | Attributes of replicas including status and last accessed date. |
-| `tags_all` | Map of all tags, including inherited provider default tags.     |
-
-## Notes
-
-- If `kms_key_id` is not provided, the default KMS key (`aws/secretsmanager`) is used.
-- To delete a secret immediately, set `recovery_window_in_days` to `0`.
-
-## Authors
-
-This module is maintained by [Your Name/Organization]. Contributions are welcome!
+This project is licensed under the MIT License.
