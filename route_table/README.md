@@ -1,99 +1,152 @@
-# Route Table Module
+### AWS Terraform Module: Route Table
 
-This Terraform module creates an AWS VPC Route Table with configurable routes, route propagation, and tagging.
+This Terraform module allows you to manage AWS route tables, define custom routes, and associate them with a VPC.
 
-## Requirements
+---
 
-- Terraform 0.12+
-- AWS provider
+### **Usage**
 
-## Usage
+#### Example Configuration
 
 ```hcl
 module "route_table" {
-  source = "./path_to_route_table_module"
+  source = "./route_table"
 
-  vpc_id = aws_vpc.example.id
+  vpc_id = "vpc-12345678"
 
-  routes = [
+  route = [
     {
-      cidr_block                 = "10.0.1.0/24"
-      gateway_id                 = aws_internet_gateway.example.id
+      cidr_block     = "0.0.0.0/0"
+      gateway_id     = "igw-12345678"
     },
     {
-      ipv6_cidr_block            = "::/0"
-      egress_only_gateway_id     = aws_egress_only_internet_gateway.example.id
+      cidr_block     = "10.0.0.0/16"
+      nat_gateway_id = "nat-12345678"
     }
   ]
 
-  propagating_vgws = [aws_vpn_gateway.example.id]
+  propagating_vgws = ["vgw-12345678"]
 
   tags = {
-    Name = "example-route-table"
+    Name = "MyRouteTable"
   }
 }
 ```
 
-### Arguments
+---
 
-- `vpc_id` - (Required) The ID of the VPC to create the route table in.
-- `routes` - (Optional) A list of route objects with the following keys:
-  - `cidr_block` - (Optional) The IPv4 CIDR block for the route.
-  - `ipv6_cidr_block` - (Optional) The IPv6 CIDR block for the route.
-  - `destination_prefix_list_id` - (Optional) The ID of a managed prefix list for the route destination.
-  - `carrier_gateway_id` - (Optional) The carrier gateway ID.
-  - `core_network_arn` - (Optional) The ARN of a core network.
-  - `egress_only_gateway_id` - (Optional) The ID of an egress-only internet gateway.
-  - `gateway_id` - (Optional) The ID of an internet gateway, virtual private gateway, or "local" for VPC CIDR block.
-  - `local_gateway_id` - (Optional) The ID of an Outpost local gateway.
-  - `nat_gateway_id` - (Optional) The ID of a NAT gateway.
-  - `network_interface_id` - (Optional) The ID of an EC2 network interface.
-  - `transit_gateway_id` - (Optional) The ID of a transit gateway.
-  - `vpc_endpoint_id` - (Optional) The ID of a VPC endpoint.
-  - `vpc_peering_connection_id` - (Optional) The ID of a VPC peering connection.
+### **Features**
 
-- `propagating_vgws` - (Optional) A list of virtual gateways for route propagation.
-- `tags` - (Optional) A map of tags to assign to the route table.
+- Create and manage route tables in AWS VPC.
+- Supports various route targets like `gateway_id`, `nat_gateway_id`, `network_interface_id`, etc.
+- Supports route propagation via virtual gateways (VGWs).
+- Outputs information such as the Route Table ID, ARN, and Owner ID.
 
-### Outputs
+---
 
-- `id` - The ID of the route table.
-- `arn` - The ARN of the route table.
-- `owner_id` - The AWS account ID that owns the route table.
-- `tags_all` - A map of tags, including those inherited from provider-level tags.
+### **Requirements**
 
-## Notes
+| **Dependency** | **Version** |
+| -------------- | ----------- |
+| Terraform      | >= 1.3.0    |
+| AWS Provider   | >= 4.0      |
 
-1. **Route Table Conflicts**: The module supports inline routes, so avoid using the standalone `aws_route` resource in conjunction to avoid conflicts.
-2. **gateway_id and nat_gateway_id**: Ensure correct usage of `gateway_id` for internet gateways and `nat_gateway_id` for NAT gateways to prevent permanent configuration diffs.
-3. **Route Propagation**: If using `propagating_vgws`, avoid defining route propagation in `aws_vpn_gateway_route_propagation` as it could override settings.
+---
 
-## Example Scenario
+### **Providers**
 
-To set up a route table with routes and propagate routes via a VPN gateway:
+| **Name** | **Source**    |
+| -------- | ------------- |
+| `aws`    | hashicorp/aws |
+
+---
+
+### **Explanation of Files**
+
+| **File**       | **Description**                                                                |
+| -------------- | ------------------------------------------------------------------------------ |
+| `main.tf`      | Defines the main resource for the route table and its routes.                  |
+| `variables.tf` | Contains the input variables for the module, including routes and propagation. |
+| `outputs.tf`   | Provides outputs, such as the ID and ARN of the route table.                   |
+
+---
+
+### **Inputs**
+
+| **Name**           | **Description**                                          | **Type**       | **Default** | **Required** |
+| ------------------ | -------------------------------------------------------- | -------------- | ----------- | ------------ |
+| `vpc_id`           | The ID of the VPC where the route table will be created. | `string`       | N/A         | Yes          |
+| `route`            | A list of routes to associate with the route table.      | `list(object)` | `[]`        | No           |
+| `propagating_vgws` | A list of virtual gateways for route propagation.        | `list(string)` | `null`      | No           |
+| `tags`             | A map of tags to assign to the route table.              | `map(string)`  | `{}`        | No           |
+
+---
+
+### **Outputs**
+
+| **Name**               | **Description**                                      |
+| ---------------------- | ---------------------------------------------------- |
+| `id`       | The ID of the created route table.                   |
+| `arn`      | The ARN of the created route table.                  |
+| `route_table_owner_id` | The ID of the AWS account that owns the route table. |
+
+---
+
+### **Example Usage**
+
+#### Define Routes
+
+This example demonstrates adding multiple routes to a route table:
 
 ```hcl
-module "route_table_example" {
-  source = "./path_to_route_table_module"
+module "route_table" {
+  source = "./route_table"
+  vpc_id = "vpc-12345678"
 
-  vpc_id = aws_vpc.main.id
-
-  routes = [
+  route = [
     {
-      cidr_block = "10.0.0.0/16"
-      gateway_id = aws_internet_gateway.main.id
+      cidr_block     = "0.0.0.0/0"
+      gateway_id     = "igw-12345678"   # Internet Gateway
+    },
+    {
+      cidr_block     = "10.0.0.0/16"
+      nat_gateway_id = "nat-87654321"   # NAT Gateway
+    },
+    {
+      cidr_block     = "172.16.0.0/16"
+      vpc_peering_connection_id = "pcx-12345678" # VPC Peering Connection
     }
   ]
 
-  propagating_vgws = [aws_vpn_gateway.main.id]
+  propagating_vgws = ["vgw-12345678"]
 
   tags = {
-    Name = "example-route-table"
+    Name = "MainRouteTable"
   }
 }
 ```
 
-## License
+#### Define Propagation with VGWs
 
-MIT License. See `LICENSE` file for details.
+If you want to allow route propagation from VGWs:
 
+```hcl
+module "route_table" {
+  source = "./route_table"
+  vpc_id = "vpc-12345678"
+
+  propagating_vgws = ["vgw-12345678"]
+}
+```
+
+---
+
+### **Authors**
+
+Maintained by [David Essien](https://davidessien.com)
+
+---
+
+### **License**
+
+This project is licensed under the MIT License.
