@@ -89,11 +89,11 @@ module "amplify_app" {
 
 ### **Outputs**
 
-| Name                         | Description                             |
-| ---------------------------- | --------------------------------------- |
-| `amplify_app_id`             | The unique ID of the Amplify app.       |
-| `amplify_app_arn`            | The ARN of the Amplify app.             |
-| `amplify_app_default_domain` | The default domain for the Amplify app. |
+| Name                 | Description                             |
+| -------------------- | --------------------------------------- |
+| `id`                 | The unique ID of the Amplify app.       |
+| `arn`                | The ARN of the Amplify app.             |
+| `app_default_domain` | The default domain for the Amplify app. |
 
 ---
 
