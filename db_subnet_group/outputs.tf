@@ -8,6 +8,11 @@ output "db_subnet_group_arn" {
   value       = aws_db_subnet_group.this.arn
 }
 
+output "name" {
+  description = "The name of the DB subnet group."
+  value       = aws_db_subnet_group.this.name
+}
+
 output "supported_network_types" {
   description = "The network types supported by the DB subnet group."
   value       = aws_db_subnet_group.this.supported_network_types

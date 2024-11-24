@@ -417,8 +417,8 @@ variable "customer_owned_ip_enabled" {
 variable "listener_endpoint" {
   description = "Configuration block for listener endpoint"
   type = object({
-    port                    = number
-    vpc_security_group_ids  = list(string)
+    port                   = number
+    vpc_security_group_ids = list(string)
   })
   default = null
 }

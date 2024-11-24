@@ -1,8 +1,8 @@
 resource "aws_db_parameter_group" "this" {
-  name        = var.name
-  name_prefix = var.name_prefix
-  family      = var.family
-  description = var.description
+  name         = var.name
+  name_prefix  = var.name_prefix
+  family       = var.family
+  description  = var.description
   skip_destroy = var.skip_destroy
 
   tags = var.tags
@@ -17,6 +17,6 @@ resource "aws_db_parameter_group" "this" {
   }
 
   lifecycle {
-    create_before_destroy = var.create_before_destroy
+    create_before_destroy = true
   }
 }

@@ -24,4 +24,8 @@ resource "aws_autoscaling_group" "this" {
       propagate_at_launch = tag.value.propagate_at_launch
     }
   }
+
+  lifecycle {
+    ignore_changes = [ target_group_arns ]
+  }
 }

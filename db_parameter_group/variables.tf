@@ -47,9 +47,3 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
-
-variable "create_before_destroy" {
-  description = "Whether to recreate the parameter group before destroying the old one."
-  type        = bool
-  default     = true
-}

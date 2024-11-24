@@ -11,7 +11,7 @@ resource "aws_lb_target_group" "this" {
   load_balancing_algorithm_type      = var.load_balancing_algorithm_type
   load_balancing_anomaly_mitigation  = var.load_balancing_anomaly_mitigation
   load_balancing_cross_zone_enabled  = var.load_balancing_cross_zone_enabled
-  preserve_client_ip                 = var.preserve_client_ip
+  preserve_client_ip                 = var.preserve_client_ip != null ? var.preserve_client_ip : null
   protocol_version                   = var.protocol_version
   proxy_protocol_v2                  = var.proxy_protocol_v2
   slow_start                         = var.slow_start
@@ -55,5 +55,9 @@ resource "aws_lb_target_group" "this" {
       minimum_healthy_targets_count      = var.target_group_health.unhealthy_state_routing.minimum_healthy_targets_count
       minimum_healthy_targets_percentage = var.target_group_health.unhealthy_state_routing.minimum_healthy_targets_percentage
     }
+  }
+
+  lifecycle {
+    ignore_changes = [ target_failover, target_health_state ]
   }
 }
