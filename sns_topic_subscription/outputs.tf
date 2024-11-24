@@ -1,4 +1,4 @@
-output "subscription_arn" {
+output "arn" {
   description = "The ARN of the SNS subscription."
   value       = aws_sns_topic_subscription.this.arn
 }
