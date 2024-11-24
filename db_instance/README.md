@@ -1,167 +1,153 @@
-# AWS RDS DB Instance Module
+# AWS RDS Terraform Module
 
-This Terraform module manages an **AWS RDS DB Instance**. It supports a wide variety of configurations for both standard and advanced use cases, including:
-
-- Support for different database engines (`MySQL`, `PostgreSQL`, `MariaDB`, etc.).
-- Multi-AZ deployment.
-- Optional configurations such as **restore-to-point-in-time**, **S3 import**, and **serverless v2 scaling**.
-- Flexible IAM, networking, monitoring, and backup options.
+This Terraform module simplifies the creation and management of an Amazon RDS instance in AWS. It abstracts the complexities of configuring an RDS instance while offering flexibility through extensive parameterization. This module supports features such as multi-AZ deployment, encryption, automated backups, and more.
 
 ---
 
-## **Usage**
+## Usage
 
-### Basic Example
+To use this module, include it in your Terraform configuration:
 
 ```hcl
-module "db_instance" {
-  source = "./modules/aws_db_instance"
+module "rds" {
+  source = "./path-to-module/db_instance"
 
-  allocated_storage = 20
-  engine            = "mysql"
-  engine_version    = "8.0"
-  instance_class    = "db.t3.micro"
-  username          = "admin"
-  password          = "securepassword123"
+  allocated_storage       = 20
+  engine                  = "mysql"
+  engine_version          = "8.0"
+  instance_class          = "db.t3.micro"
+  username                = "admin"
+  password                = "password123"
+  publicly_accessible     = false
+  multi_az                = false
+  backup_retention_period = 7
+}
+```
+
+### Key Parameters
+
+- **`allocated_storage`**: Specifies the amount of storage (in GiB) allocated for the RDS instance.
+- **`engine`**: The database engine to use (e.g., `mysql`, `postgres`).
+- **`instance_class`**: The instance type of the RDS instance (e.g., `db.t3.micro`).
+- **`multi_az`**: Indicates if the instance should be deployed across multiple availability zones.
+- **`backup_retention_period`**: Number of days to retain backups.
+
+---
+
+## Requirements
+
+| **Terraform** | **AWS Provider** |
+| ------------- | ---------------- |
+| >= 1.3.0      | >= 4.0           |
+
+---
+
+## Providers
+
+| **Provider** | **Purpose**                  |
+| ------------ | ---------------------------- |
+| `aws`        | Interacts with AWS resources |
+
+---
+
+## Features
+
+- Simplifies RDS instance setup.
+- Supports multi-AZ deployments for high availability.
+- Enables automated backups with customizable retention periods.
+- Optionally configures database encryption.
+- Allows monitoring via CloudWatch Logs.
+
+---
+
+## Explanation of Files
+
+| **File**       | **Description**                                                                   |
+| -------------- | --------------------------------------------------------------------------------- |
+| `main.tf`      | Defines the RDS resource and its properties.                                      |
+| `variables.tf` | Lists all configurable parameters with their descriptions and default values.     |
+| `outputs.tf`   | Outputs the attributes of the created RDS instance, such as its endpoint and ARN. |
+| `README.md`    | Provides module documentation, usage instructions, and parameter explanations.    |
+
+---
+
+## Inputs
+
+| **Variable**              | **Type** | **Default** | **Description**                                                   | **Required** |
+| ------------------------- | -------- | ----------- | ----------------------------------------------------------------- | ------------ |
+| `allocated_storage`       | `number` |             | The allocated storage in GiB.                                     | Yes          |
+| `engine`                  | `string` |             | The database engine to use (e.g., `mysql`, `postgres`).           | Yes          |
+| `instance_class`          | `string` |             | The RDS instance class (e.g., `db.t3.micro`).                     | Yes          |
+| `username`                | `string` |             | Username for the master DB user.                                  | Yes          |
+| `password`                | `string` |             | Password for the master DB user.                                  | Yes          |
+| `backup_retention_period` | `number` | `0`         | Number of days to retain backups for the instance.                | No           |
+| `multi_az`                | `bool`   | `false`     | Specifies if the RDS instance is multi-AZ.                        | No           |
+| `publicly_accessible`     | `bool`   | `false`     | Indicates if the instance is accessible over the public internet. | No           |
+| `storage_encrypted`       | `bool`   | `false`     | Specifies if the storage is encrypted.                            | No           |
+
+---
+
+## Outputs
+
+| **Output**          | **Description**                                   |
+| ------------------- | ------------------------------------------------- |
+| `address`           | The hostname of the RDS instance.                 |
+| `arn`               | The ARN of the RDS instance.                      |
+| `db_name`           | The database name.                                |
+| `endpoint`          | The connection endpoint in `address:port` format. |
+| `engine`            | The database engine used.                         |
+| `port`              | The database port.                                |
+| `status`            | The RDS instance status.                          |
+| `allocated_storage` | The amount of allocated storage for the instance. |
+| `multi_az`          | Indicates if the instance is multi-AZ.            |
+| `username`          | The master username for the database.             |
+
+---
+
+## Example Usage
+
+### Single Instance with MySQL
+
+```hcl
+module "rds" {
+  source = "./path-to-module/db_instance"
+
+  allocated_storage       = 20
+  engine                  = "mysql"
+  engine_version          = "8.0"
+  instance_class          = "db.t3.micro"
+  username                = "admin"
+  password                = "securepassword"
+  backup_retention_period = 7
+  multi_az                = true
+}
+```
+
+### PostgreSQL Instance with Multi-AZ
+
+```hcl
+module "rds" {
+  source = "./path-to-module/db_instance"
+
+  allocated_storage   = 50
+  engine              = "postgres"
+  engine_version      = "13"
+  instance_class      = "db.m6g.large"
+  username            = "pgadmin"
+  password            = "anothersecurepassword"
   publicly_accessible = false
-
-  vpc_security_group_ids = ["sg-0123456789abcdef0"]
-  db_subnet_group_name   = "my-db-subnet-group"
-
-  tags = {
-    Environment = "production"
-    Project     = "my-project"
-  }
-}
-```
-
-### Advanced Example: Restore to Point in Time
-
-```hcl
-module "db_instance" {
-  source = "./modules/aws_db_instance"
-
-  restore_to_point_in_time = {
-    source_db_instance_identifier = "my-source-db"
-    use_latest_restorable_time    = true
-    restore_time                  = null
-    db_instance_identifier        = "restored-db"
-  }
-
-  instance_class              = "db.t3.medium"
-  multi_az                    = true
-  backup_retention_period     = 7
-  enabled_cloudwatch_logs_exports = ["error", "general", "slowquery"]
-
-  tags = {
-    Name = "restored-db-instance"
-  }
+  multi_az            = true
 }
 ```
 
 ---
 
-## **Inputs**
+## Authors
 
-The module accepts the following inputs. Refer to `variables.tf` for detailed descriptions.
-
-| Name                                  | Type           | Default | Description                                                      |
-| ------------------------------------- | -------------- | ------- | ---------------------------------------------------------------- |
-| `allocated_storage`                   | `number`       | -       | Amount of allocated storage in GB.                               |
-| `auto_minor_version_upgrade`          | `bool`         | `true`  | Automatically apply minor engine upgrades.                       |
-| `availability_zone`                   | `string`       | `null`  | The availability zone for the instance.                          |
-| `backup_retention_period`             | `number`       | `7`     | Number of days to retain backups.                                |
-| `backup_window`                       | `string`       | `null`  | Preferred backup window.                                         |
-| `ca_cert_identifier`                  | `string`       | `null`  | The CA certificate identifier.                                   |
-| `db_name`                             | `string`       | `null`  | Name of the database to create.                                  |
-| `db_subnet_group_name`                | `string`       | `null`  | Name of the subnet group for the DB instance.                    |
-| `deletion_protection`                 | `bool`         | `false` | Prevent the instance from being deleted.                         |
-| `domain`                              | `string`       | `null`  | Active Directory domain to join.                                 |
-| `domain_auth_secret_arn`              | `string`       | `null`  | ARN of the Secrets Manager secret with AD credentials.           |
-| `domain_dns_ips`                      | `list(string)` | `null`  | IP addresses of DNS servers for the AD domain.                   |
-| `domain_fqdn`                         | `string`       | `null`  | Fully qualified domain name for the AD domain.                   |
-| `domain_iam_role_name`                | `string`       | `null`  | IAM role for authenticating with the AD domain.                  |
-| `engine`                              | `string`       | -       | The database engine to use (e.g., `mysql`, `postgres`).          |
-| `engine_version`                      | `string`       | -       | The version of the database engine.                              |
-| `final_snapshot_identifier`           | `string`       | `null`  | Identifier for the final snapshot before deletion.               |
-| `instance_class`                      | `string`       | -       | The instance type for the DB instance (e.g., `db.t3.micro`).     |
-| `multi_az`                            | `bool`         | `false` | Enable Multi-AZ deployment.                                      |
-| `password`                            | `string`       | -       | Master user password.                                            |
-| `performance_insights_enabled`        | `bool`         | `false` | Enable Performance Insights.                                     |
-| `replicate_source_db`                 | `string`       | `null`  | The identifier of the source DB for replication.                 |
-| `restore_to_point_in_time`            | `object`       | `null`  | Restore configuration for a specific point in time.              |
-| `s3_import`                           | `object`       | `null`  | S3 import configuration for the database.                        |
-| `serverless_v2_scaling_configuration` | `object`       | `null`  | Scaling configuration for serverless DB instances.               |
-| `timeouts`                            | `object`       | `{...}` | Timeout configuration for create, update, and delete operations. |
-| `vpc_security_group_ids`              | `list(string)` | `[]`    | List of VPC security group IDs.                                  |
+Maintained by [David Essien](https://davidessien.com).
 
 ---
 
-## **Outputs**
+## License
 
-The module exports the following outputs:
-
-| Name                     | Description                            |
-| ------------------------ | -------------------------------------- |
-| `db_instance_arn`        | The ARN of the DB instance.            |
-| `db_instance_address`    | The address of the DB instance.        |
-| `db_instance_status`     | The current status of the DB instance. |
-| `db_instance_identifier` | The identifier of the DB instance.     |
-
----
-
-## **Advanced Features**
-
-### Restore to Point in Time
-
-This feature allows restoring an RDS DB instance to a specific point in time, using the `restore_to_point_in_time` block. Example:
-
-```hcl
-restore_to_point_in_time = {
-  source_db_instance_identifier = "my-source-db"
-  use_latest_restorable_time    = true
-  restore_time                  = null
-  db_instance_identifier        = "restored-db"
-}
-```
-
-### S3 Import
-
-Import data from S3 into an RDS DB instance with the `s3_import` block. Example:
-
-```hcl
-s3_import = {
-  bucket_name          = "my-bucket"
-  bucket_prefix        = "db-backups/"
-  ingestion_role       = "arn:aws:iam::123456789012:role/S3IngestionRole"
-  source_engine        = "mysql"
-  source_engine_version = "8.0"
-}
-```
-
-### Serverless v2 Scaling
-
-Use serverless v2 scaling for Aurora DB instances:
-
-```hcl
-serverless_v2_scaling_configuration = {
-  min_capacity = 0.5
-  max_capacity = 2.0
-}
-```
-
----
-
-## **Notes**
-
-- Ensure the `engine` and `engine_version` are compatible with your use case.
-- Use secure practices for storing sensitive values like `password` (e.g., Secrets Manager).
-- For Multi-AZ deployments, additional costs may apply.
-
----
-
-## **Author**
-
-This module is maintained by [Your Name or Organization]. Contributions and issues are welcome.
-
-Let me know if you'd like further customization!
+This project is licensed under the MIT License.
