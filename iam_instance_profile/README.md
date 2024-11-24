@@ -1,170 +1,130 @@
-# Terraform AWS IAM Instance Profile Module
+# AWS Terraform Module: IAM Instance Profile
 
-This module creates an AWS IAM instance profile using Terraform. It provides a convenient way to manage EC2 instance profiles with associated roles and policies.
+## Brief Description
 
-## Table of Contents
+This Terraform module is used to create and manage an IAM instance profile in AWS. An IAM instance profile is associated with an EC2 instance, allowing it to assume IAM roles and gain the associated permissions. This module allows for the configuration of instance profiles, including assigning IAM roles, setting tags, and defining names or name prefixes.
 
-- [Terraform AWS IAM Instance Profile Module](#terraform-aws-iam-instance-profile-module)
-  - [Table of Contents](#table-of-contents)
-  - [Features](#features)
-  - [Usage](#usage)
-  - [Arguments](#arguments)
-    - [Required](#required)
-    - [Optional](#optional)
-  - [Outputs](#outputs)
-  - [Examples](#examples)
-  - [Modules](#modules)
-  - [Requirements](#requirements)
-  - [Providers](#providers)
-  - [Resources](#resources)
-  - [Inputs](#inputs)
-  - [Outputs](#outputs-1)
-  - [Maintainers](#maintainers)
-
-## Features
-
-- Creates an IAM instance profile with associated role and policies
-- Supports custom policies and managed AWS policies
-- Allows creation of inline policies
-- Generates Terraform outputs for easy reference
+---
 
 ## Usage
 
-Basic usage:
+### Example Configuration
 
 ```hcl
 module "iam_instance_profile" {
-  source = "path/to/module"
-
-  name        = "my-instance-profile"
-  description = "My EC2 instance profile"
-
-  roles = [
-    {
-      name     = "ec2-role"
-      policies = ["AmazonEC2FullAccess"]
-    }
-  ]
+  source = "./iam_instance_profile"
+  name   = "my-instance-profile"
+  role   = "my-iam-role"
+  tags   = {
+    "Environment" = "production"
+  }
 }
 ```
 
-## Arguments
+### Explanation of Key Parameters
 
-### Required
+- **`name`**: The name of the IAM instance profile.
+- **`name_prefix`**: Creates a unique name by beginning with the specified prefix. Conflicts with the `name` parameter (optional).
+- **`path`**: The path to the instance profile (default is "/").
+- **`role`**: The name of the IAM role to associate with the instance profile.
+- **`tags`**: A map of tags to assign to the instance profile (optional).
 
-- `name` - (string) The name of the instance profile
-- `description` - (string) Description of the instance profile
-
-### Optional
-
-- `roles` - (list of objects) List of roles to attach to the instance profile
-- `create_policies` - (bool) Whether to create inline policies
-- `policy_statements` - (list of objects) Inline policy statements
-- `policy_arns` - (list of strings) ARNs of managed policies to attach
-
-## Outputs
-
-- `instance_profile_id` - ID of the created instance profile
-- `role_ids` - IDs of the attached roles
-- `attached_policy_arns` - ARNs of attached policies
-
-## Examples
-
-1. Basic example with single role and managed policy:
-
-```hcl
-module "example" {
-  source = "path/to/module"
-
-  name        = "my-example-profile"
-  description = "Example instance profile"
-
-  roles = [
-    {
-      name     = "example-role"
-      policies = ["AWSReservedSSO_AWSAdministratorAccessRole"]
-    }
-  ]
-}
-```
-
-2. Example with multiple roles and custom inline policy:
-
-```hcl
-module "advanced_example" {
-  source = "path/to/module"
-
-  name        = "multi-role-profile"
-  description = "Advanced instance profile with multiple roles"
-
-  roles = [
-    {
-      name     = "admin-role"
-      policies = ["AmazonEC2FullAccess", "AWSLambda_FullAccess"]
-    },
-    {
-      name     = "read-only-role"
-      policies = ["AmazonS3ReadOnlyAccess"]
-    }
-  ]
-
-  create_policies = true
-  policy_statements = [
-    {
-      sid       = "AllowS3Read"
-      effect    = "Allow"
-      actions   = ["s3:GetObject", "s3:ListBucket"]
-      resources = ["arn:aws:s3:::my-bucket/*", "arn:aws:s3:::my-bucket"]
-    }
-  ]
-}
-```
-
-## Modules
-
-This module does not use any nested modules.
+---
 
 ## Requirements
 
-| Name      | Version   |
-| --------- | --------- |
-| terraform | >= 0.12.0 |
-| aws       | ~> 4.0    |
+| **Requirement** | **Version** |
+| --------------- | ----------- |
+| Terraform       | >= 1.0.0    |
+| AWS Provider    | >= 4.0      |
+
+---
 
 ## Providers
 
-| Name | Version |
-| ---- | ------- |
-| aws  | n       |
+| **Provider** | **Purpose**            |
+| ------------ | ---------------------- |
+| `aws`        | Manages AWS resources. |
 
-## Resources
+---
 
-| Name                           | Type     |
-| ------------------------------ | -------- |
-| aws_iam_instance_profile       | resource |
-| aws_iam_role                   | resource |
-| aws_iam_role_policy            | resource |
-| aws_iam_role_policy_attachment | resource |
+## Features
+
+- Creates an IAM instance profile in AWS.
+- Associates an IAM role with the instance profile.
+- Supports defining a unique name with an optional prefix.
+- Allows adding tags to the instance profile.
+
+---
+
+## Explanation of Files
+
+| **File**       | **Description**                                                                        |
+| -------------- | -------------------------------------------------------------------------------------- |
+| `main.tf`      | Defines the `aws_iam_instance_profile` resource for creating the IAM instance profile. |
+| `variables.tf` | Declares input variables for configuring the IAM instance profile, role, and tags.     |
+| `outputs.tf`   | Outputs the IAM instance profile ARN, ID, and unique ID.                               |
+| `README.md`    | Documentation for the module.                                                          |
+
+---
 
 ## Inputs
 
-| Name              | Description                                     | Type                                                                                                                                                                                  | Default | Required |
-| ----------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | :------: |
-| name              | The name of the instance profile                | string                                                                                                                                                                                | n       |   yes    |
-| description       | Description of the instance profile             | string                                                                                                                                                                                | ""      |    no    |
-| roles             | List of roles to attach to the instance profile | list(object({name = string, policies = list(string)}))                                                                                                                                | []      |    no    |
-| create_policies   | Whether to create inline policies               | bool                                                                                                                                                                                  | false   |    no    |
-| policy_statements | Inline policy statements                        | list(object({sid = string, effect = string, actions = list(string), resources = list(string), conditions = list(object({test = string, variable = string, values = list(string)}))})) | []      |    no    |
-| policy_arns       | ARNs of managed policies to attach              | list(string)                                                                                                                                                                          | []      |    no    |
+| **Variable**  | **Description**                                                                      | **Type**      | **Default** | **Required** |
+| ------------- | ------------------------------------------------------------------------------------ | ------------- | ----------- | ------------ |
+| `name`        | The name of the IAM instance profile.                                                | `string`      | N/A         | Yes          |
+| `name_prefix` | Creates a unique name by beginning with the specified prefix. Conflicts with `name`. | `string`      | `null`      | No           |
+| `path`        | The path to the instance profile. Defaults to `/`.                                   | `string`      | `/`         | No           |
+| `role`        | The name of the IAM role to associate with the instance profile.                     | `string`      | N/A         | Yes          |
+| `tags`        | A map of tags to assign to the instance profile.                                     | `map(string)` | `{}`        | No           |
+
+---
 
 ## Outputs
 
-| Name                 | Description                        |
-| -------------------- | ---------------------------------- |
-| instance_profile_id  | ID of the created instance profile |
-| role_ids             | IDs of the attached roles          |
-| attached_policy_arns | ARNs of attached policies          |
+| **Output**  | **Description**                                            |
+| ----------- | ---------------------------------------------------------- |
+| `arn`       | The ARN of the IAM instance profile.                       |
+| `id`        | The ID of the IAM instance profile.                        |
+| `unique_id` | The unique ID assigned by AWS to the IAM instance profile. |
 
-## Maintainers
+---
 
-- Your Name <your.email@example.com>
+## Example Usage
+
+### Basic IAM Instance Profile
+
+```hcl
+module "iam_instance_profile_basic" {
+  source = "./iam_instance_profile"
+  name   = "basic-instance-profile"
+  role   = "my-iam-role"
+}
+```
+
+### IAM Instance Profile with Tags and Prefix
+
+```hcl
+module "iam_instance_profile_with_tags" {
+  source     = "./iam_instance_profile"
+  name       = "my-instance-profile"
+  role       = "my-iam-role"
+  name_prefix = "prod-"
+  tags = {
+    "Environment" = "production"
+    "Project"     = "web-app"
+  }
+}
+```
+
+---
+
+## Authors
+
+This module is maintained by [David Essien](https://davidessien.com).
+
+---
+
+## License
+
+This project is licensed under the MIT License. See `LICENSE` for more information.
