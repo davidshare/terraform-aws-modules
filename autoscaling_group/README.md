@@ -104,11 +104,11 @@ module "autoscaling_group" {
 
 ### **Outputs**
 
-| Name                     | Description                       |
-| ------------------------ | --------------------------------- |
-| `autoscaling_group_id`   | The Auto Scaling Group ID         |
-| `autoscaling_group_name` | The Auto Scaling Group name       |
-| `autoscaling_group_arn`  | The ARN of the Auto Scaling Group |
+| Name   | Description                       |
+| ------ | --------------------------------- |
+| `id`   | The Auto Scaling Group ID         |
+| `name` | The Auto Scaling Group name       |
+| `arn`  | The ARN of the Auto Scaling Group |
 
 ---
 
