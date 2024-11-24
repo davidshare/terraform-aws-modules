@@ -2,8 +2,6 @@
 
 This Terraform module facilitates the creation and management of AWS CloudWatch Log Groups with support for customizable configurations like retention periods, encryption, and tagging.
 
-## Purpose of the Module
-
 The module simplifies the deployment of CloudWatch Log Groups by providing flexible options for naming, retention settings, encryption, and lifecycle management, enabling efficient log storage and compliance with organizational requirements.
 
 ---
