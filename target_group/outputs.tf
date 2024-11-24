@@ -1,9 +1,9 @@
-output "target_group_arn" {
+output "arn" {
   description = "ARN of the target group"
   value       = aws_lb_target_group.this.arn
 }
 
-output "target_group_name" {
+output "name" {
   description = "Name of the target group"
   value       = aws_lb_target_group.this.name
 }
