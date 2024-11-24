@@ -1,9 +1,9 @@
-output "volume_id" {
+output "id" {
   description = "The volume ID"
   value       = aws_ebs_volume.this.id
 }
 
-output "volume_arn" {
+output "arn" {
   description = "The volume ARN"
   value       = aws_ebs_volume.this.arn
 }
