@@ -185,6 +185,28 @@ We welcome contributions to improve the modules or add new ones! To contribute:
    ```
 4. Create a pull request.
 
+### Making changes to individual modules
+
+There are two approaches to making changes to the individual modules
+
+**Approach 1**
+
+- make your changes in the master branch
+- commit your changes
+- switch to the branch with the module you want to update. Example: `git checkout vpc-module`
+- update the module you made the changes in. Example: `git checkout master -- vpc/`
+- before you run the previous command, make sure you are in the branch where you want the changes, not the branch where the change was made.
+- In the example, the master branch is where the change was made, but we are in the vpc-module branch.
+
+**Approach 2**
+
+- make your changes in the branch that contains the module
+- commit your changes and create your release. Follow the steps below to update the master branch with your changes.
+- switch to the master branch. Example: `git checkout master`
+- update the master branch with changes from your module branch. Example: `git checkout vpc-module -- vpc/`
+- before you run the previous command, make sure you are in the master branch.
+- In the example, the vpc-module branch is where the change was made, but we are in the master branch.
+
 ---
 
 ## Creating a Release
