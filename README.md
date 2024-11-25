@@ -117,7 +117,7 @@ Below is an example of how to use the `vpc` module to create a VPC with DNS supp
 
 ```hcl
 module "vpc" {
-  source = "./vpc"
+  source = "github.com/davidshare/terraform-aws-modules//vpc?ref=vpc-v1.0.0"
 
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = true
@@ -188,6 +188,15 @@ We welcome contributions to improve the modules or add new ones! To contribute:
 ---
 
 ## Creating a Release
+
+Each module in the repository has a corresponding branch with the format `<directory_name>-module`. for example, vpc-module, lb_listener-module.
+The repository contains a github action in the .github.workflow directory that is use for creating releases.
+
+### To create a release
+
+- switch to the branch that contains the module
+- create a tag with the commit that has the changes you want release
+- the format of the tag is `<directory_name>-v<version_number>` example: `vpc-v1.0.0` or `lb_listener-v2.0.4`
 
 ## License
 
