@@ -133,7 +133,7 @@ module "vpc" {
 
 ```hcl
 module "s3_bucket" {
-  source = "./s3_bucket"
+  source = "github.com/davidshare/terraform-aws-modules//s3?ref=s3-v1.0.0"
 
   bucket_name = "my-example-bucket"
   tags = {
