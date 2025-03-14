@@ -72,6 +72,68 @@ variable "timeout" {
   default     = 3
 }
 
+variable "publish" {
+  description = "Whether to publish creation/change as a new Lambda Function Version"
+  type        = bool
+  default     = false
+}
+
+variable "reserved_concurrent_executions" {
+  description = "The amount of reserved concurrent executions for this Lambda function"
+  type        = number
+  default     = null
+}
+
+variable "architectures" {
+  description = "Instruction set architecture for your Lambda function"
+  type        = list(string)
+  default     = ["x86_64"]
+}
+
+variable "package_type" {
+  description = "The type of deployment package. Valid values are `Zip` and `Image`"
+  type        = string
+  default     = "Zip"
+}
+
+variable "image_uri" {
+  description = "The ECR image URI containing the function's deployment package"
+  type        = string
+  default     = null
+}
+
+variable "image_config" {
+  description = "Configuration for the container image"
+  type = object({
+    entry_point           = list(string)
+    command               = list(string)
+    working_directory     = string
+  })
+  default = null
+}
+
+variable "code_signing_config_arn" {
+  description = "ARN of the code signing configuration"
+  type        = string
+  default     = null
+}
+
+variable "dead_letter_config" {
+  description = "Configuration for the dead letter queue"
+  type = object({
+    target_arn = string
+  })
+  default = null
+}
+
+variable "tracing_config" {
+  description = "Configuration for tracing"
+  type = object({
+    mode = string
+  })
+  default = null
+}
+
 variable "vpc_config" {
   description = "Provide this to allow your function to access your VPC"
   type = object({
@@ -85,6 +147,15 @@ variable "environment" {
   description = "The Lambda environment's configuration settings"
   type = object({
     variables = map(string)
+  })
+  default = null
+}
+
+variable "file_system_config" {
+  description = "Configuration for the file system"
+  type = object({
+    arn              = string
+    local_mount_path = string
   })
   default = null
 }
