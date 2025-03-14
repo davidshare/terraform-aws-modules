@@ -2,6 +2,9 @@
 
 This repository contains a collection of Terraform modules designed to help manage AWS infrastructure efficiently. Each module is standalone and serves a specific purpose, allowing users to mix and match as needed to build scalable and robust cloud environments. The repository adheres to Terraform's modular architecture, promoting reusability, maintainability, and clarity.
 
+## !WARNING ⚠️
+Only modules that have been released have been tested.
+
 ## Table of Contents
 
 1. [Overview](#overview)
