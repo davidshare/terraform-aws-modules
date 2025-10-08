@@ -1,52 +1,33 @@
 variable "bucket" {
-  description = "The name of the bucket"
+  description = "Name of the bucket. If omitted, Terraform will assign a random, unique name. Must be lowercase and less than or equal to 63 characters in length"
   type        = string
+  default     = null
+  validation {
+    condition     = var.bucket == null ? true : can(regex("^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$", var.bucket))
+    error_message = "Bucket name must be DNS-compliant: lowercase alphanumeric characters, hyphens, and periods, starting and ending with alphanumeric, 3-63 characters."
+  }
+}
+
+variable "bucket_prefix" {
+  description = "Creates a unique bucket name beginning with the specified prefix. Conflicts with bucket"
+  type        = string
+  default     = null
 }
 
 variable "force_destroy" {
-  description = "A boolean that indicates all objects should be deleted from the bucket so that the bucket can be destroyed without error"
+  description = "Boolean that indicates all objects should be deleted from the bucket when the bucket is destroyed so that the bucket can be destroyed without error"
   type        = bool
   default     = false
 }
 
-variable "versioning" {
-  description = "Map containing versioning configuration"
-  type        = map(string)
-  default     = {}
-}
-
-variable "website" {
-  description = "Map containing static web-site hosting or redirect configuration"
-  type        = map(string)
-  default     = {}
-}
-
-variable "cors_rule" {
-  description = "List of maps containing rules for Cross-Origin Resource Sharing"
-  type        = any
-  default     = []
-}
-
-variable "lifecycle_rule" {
-  description = "List of maps containing configuration of object lifecycle management"
-  type        = any
-  default     = []
-}
-
-variable "logging" {
-  description = "Map containing access bucket logging configuration"
-  type        = map(string)
-  default     = {}
-}
-
-variable "server_side_encryption_configuration" {
-  description = "Map containing server-side encryption configuration"
-  type        = any
-  default     = {}
+variable "object_lock_enabled" {
+  description = "Indicates whether this bucket has an Object Lock configuration enabled"
+  type        = bool
+  default     = false
 }
 
 variable "tags" {
-  description = "A mapping of tags to assign to the bucket"
+  description = "Map of tags to assign to the bucket"
   type        = map(string)
   default     = {}
 }
