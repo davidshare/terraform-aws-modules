@@ -4,24 +4,24 @@ resource "aws_lambda_function" "this" {
   runtime       = var.runtime
   role          = var.role
 
-  filename         = var.filename
-  s3_bucket        = var.s3_bucket
-  s3_key           = var.s3_key
+  filename          = var.filename
+  s3_bucket         = var.s3_bucket
+  s3_key            = var.s3_key
   s3_object_version = var.s3_object_version
-  source_code_hash = var.source_code_hash
+  source_code_hash  = var.source_code_hash
 
-  description = var.description
-  layers      = var.layers
-  memory_size = var.memory_size
-  timeout     = var.timeout
-  publish     = var.publish
+  description                    = var.description
+  layers                         = var.layers
+  memory_size                    = var.memory_size
+  timeout                        = var.timeout
+  publish                        = var.publish
   reserved_concurrent_executions = var.reserved_concurrent_executions
-  architectures = var.architectures
-  package_type = var.package_type
-  image_uri    = var.image_uri
+  architectures                  = var.architectures
+  package_type                   = var.package_type
+  image_uri                      = var.image_uri
   image_config {
-    entry_point = each.value.image_config.entry_point
-    command = each.value.image_config.command
+    entry_point       = each.value.image_config.entry_point
+    command           = each.value.image_config.command
     working_directory = each.value.image_config.working_directory
   }
   code_signing_config_arn = var.code_signing_config_arn
@@ -41,7 +41,7 @@ resource "aws_lambda_function" "this" {
     content {
       mode = var.tracing_config.mode
     }
-  } 
+  }
 
   dynamic "vpc_config" {
     for_each = var.vpc_config != null ? [var.vpc_config] : []

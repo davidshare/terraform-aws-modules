@@ -5,8 +5,8 @@ resource "aws_s3_bucket_replication_configuration" "this" {
   dynamic "rule" {
     for_each = var.rules
     content {
-      id     = lookup(rule.value, "id", null)
-      status = rule.value.status
+      id       = lookup(rule.value, "id", null)
+      status   = rule.value.status
       priority = lookup(rule.value, "priority", null)
 
       dynamic "filter" {

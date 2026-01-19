@@ -105,9 +105,9 @@ variable "image_uri" {
 variable "image_config" {
   description = "Configuration for the container image"
   type = object({
-    entry_point           = list(string)
-    command               = list(string)
-    working_directory     = string
+    entry_point       = list(string)
+    command           = list(string)
+    working_directory = string
   })
   default = null
 }

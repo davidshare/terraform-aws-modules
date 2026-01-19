@@ -32,7 +32,7 @@ Strongly recommended to use:
 
 This avoids formatting, whitespace, and ordering issues.
 EOT
-  type = string
+  type        = string
 }
 
 variable "tags" {
@@ -48,6 +48,6 @@ Number of milliseconds to wait after creating the policy before setting its vers
 This may be required in environments with very high S3 or IAM API throughput,
 where AWS exhibits eventual consistency delays.
 EOT
-  type    = number
-  default = null
+  type        = number
+  default     = null
 }

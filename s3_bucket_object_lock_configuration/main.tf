@@ -1,7 +1,7 @@
 resource "aws_s3_bucket_object_lock_configuration" "this" {
-  bucket = var.bucket
+  bucket                = var.bucket
   expected_bucket_owner = var.expected_bucket_owner
-  object_lock_enabled = var.object_lock_enabled
+  object_lock_enabled   = var.object_lock_enabled
 
   dynamic "rule" {
     for_each = var.rule != null ? [var.rule] : []

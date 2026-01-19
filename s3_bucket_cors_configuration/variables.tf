@@ -38,7 +38,7 @@ variable "cors_rules" {
   }
 
   validation {
-    condition = length(var.cors_rules) <= 100
+    condition     = length(var.cors_rules) <= 100
     error_message = "You can configure up to 100 CORS rules maximum."
   }
 }

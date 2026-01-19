@@ -15,9 +15,9 @@ variable "lambda_functions" {
 
 variable "topics" {
   type = list(object({
-    id         = optional(string)
-    topic_arn  = string
-    events     = list(string)
+    id            = optional(string)
+    topic_arn     = string
+    events        = list(string)
     filter_prefix = optional(string)
     filter_suffix = optional(string)
   }))
@@ -26,9 +26,9 @@ variable "topics" {
 
 variable "queues" {
   type = list(object({
-    id         = optional(string)
-    queue_arn  = string
-    events     = list(string)
+    id            = optional(string)
+    queue_arn     = string
+    events        = list(string)
     filter_prefix = optional(string)
     filter_suffix = optional(string)
   }))

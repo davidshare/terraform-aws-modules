@@ -39,7 +39,7 @@ variable "rule" {
   }
 
   validation {
-    condition = var.rule == null ? true : contains(["COMPLIANCE", "GOVERNANCE"], var.rule.default_retention.mode)
+    condition     = var.rule == null ? true : contains(["COMPLIANCE", "GOVERNANCE"], var.rule.default_retention.mode)
     error_message = "Retention mode must be either 'COMPLIANCE' or 'GOVERNANCE'."
   }
 }

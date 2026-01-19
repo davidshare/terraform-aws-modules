@@ -12,8 +12,8 @@ variable "expected_bucket_owner" {
 variable "rules" {
   description = "List of lifecycle rules for the bucket"
   type = list(object({
-    id      = string
-    status  = string
+    id     = string
+    status = string
     filter = optional(object({
       prefix                   = optional(string)
       object_size_greater_than = optional(number)

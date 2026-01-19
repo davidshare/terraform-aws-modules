@@ -5,8 +5,8 @@ resource "aws_s3_bucket_intelligent_tiering_configuration" "this" {
   dynamic "tiering" {
     for_each = var.tiering
     content {
-      days         = tiering.value.days
-      access_tier  = tiering.value.access_tier
+      days        = tiering.value.days
+      access_tier = tiering.value.access_tier
     }
   }
 

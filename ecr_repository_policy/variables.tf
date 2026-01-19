@@ -6,10 +6,10 @@ variable "repository" {
 variable "statements" {
   description = "List of policy statements to apply to the repository."
   type = list(object({
-    sid        = optional(string)
-    effect     = string
-    actions    = list(string)
-    resources  = optional(list(string), ["*"])
+    sid       = optional(string)
+    effect    = string
+    actions   = list(string)
+    resources = optional(list(string), ["*"])
     principals = list(object({
       type        = string
       identifiers = list(string)

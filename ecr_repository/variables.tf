@@ -50,10 +50,10 @@ variable "encryption_configuration" {
   description = "Encryption settings for the repository"
   type = object({
     encryption_type = string
-    kms_key        = string
+    kms_key         = string
   })
   default = {
     encryption_type = "AES256"
-    kms_key        = null
+    kms_key         = null
   }
 }

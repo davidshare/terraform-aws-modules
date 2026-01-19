@@ -58,6 +58,6 @@ resource "aws_lb_target_group" "this" {
   }
 
   lifecycle {
-    ignore_changes = [ target_failover, target_health_state ]
+    ignore_changes = [target_failover, target_health_state]
   }
 }
